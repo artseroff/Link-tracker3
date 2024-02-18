@@ -2,20 +2,23 @@ package edu.java.bot.command.factory;
 
 import edu.java.bot.command.ActionCommand;
 import edu.java.bot.command.UnknownCommand;
-import edu.java.bot.command.client.CommandEnum;
 import edu.java.bot.command.raw.ParameterizableTextCommand;
+import java.util.Set;
 
 public class ActionFactory {
-    private ActionFactory() {
+
+    private final Set<ActionCommand> commands;
+
+    public ActionFactory(Set<ActionCommand> commands) {
+        this.commands = commands;
     }
 
-    public static ActionCommand defineCommand(ParameterizableTextCommand textCommand) {
+    public ActionCommand defineCommand(ParameterizableTextCommand textCommand) {
         ActionCommand command = new UnknownCommand();
-        String action = textCommand.command().toUpperCase();
-        CommandEnum[] enumCommands = CommandEnum.values();
-        for (CommandEnum enumCommandElement : enumCommands) {
-            if (enumCommandElement.name().equals(action)) {
-                command = enumCommandElement.getCommand();
+        String action = textCommand.command().toLowerCase();
+        for (ActionCommand actionCommand : commands) {
+            if (actionCommand.command().equals(action)) {
+                command = actionCommand;
             }
         }
         return command;

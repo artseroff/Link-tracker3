@@ -1,5 +1,6 @@
 package edu.java.bot.service.link;
 
+import edu.java.bot.command.raw.ParameterizableTextCommand;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,9 +11,6 @@ import org.jetbrains.annotations.NotNull;
 public class LinkUtils {
     public static final String SECURE_HYPER_TEXT_PROTOCOL = "https://";
     public static final String HYPER_TEXT_PROTOCOL = "http://";
-
-    public static final AbstractLinkValidator CHAIN =
-        buildChain(Set.of(new GitHubLinkValidator(), new StackOverflowLinkValidator()));
 
     private LinkUtils() {
     }
@@ -44,10 +42,25 @@ public class LinkUtils {
         return first;
     }
 
-    public static void checkLinkCorrectnessOrThrow(@NotNull String text) {
-        URL url = LinkUtils.textToUrl(text);
-        if (!LinkUtils.CHAIN.isValid(url)) {
-            throw new IllegalArgumentException("Введена ссылка, которая не поддерживается сервисом");
+    public static void checkLinkCorrectnessForTrackingOrThrow(
+        @NotNull ParameterizableTextCommand textCommand,
+        @NotNull AbstractLinkValidator linkValidator,
+        @NotNull String oneParameterMessage
+    ) {
+        String rawParameter = textCommand.rawParameter();
+        if (rawParameter == null) {
+            throw new IllegalArgumentException(oneParameterMessage);
+        }
+
+        String[] tokens = rawParameter.split("\\s+");
+        if (tokens.length != 1) {
+            throw new IllegalArgumentException(oneParameterMessage);
+        }
+
+        URL url = LinkUtils.textToUrl(textCommand.rawParameter());
+        if (!linkValidator.isValid(url)) {
+            throw new IllegalArgumentException("Введена ссылка, которая не поддерживается для отслеживания");
         }
     }
+
 }

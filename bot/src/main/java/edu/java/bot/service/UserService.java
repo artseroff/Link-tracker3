@@ -3,12 +3,13 @@ package edu.java.bot.service;
 import edu.java.bot.exception.AlreadyTrackedLinkException;
 import edu.java.bot.exception.NotTrackedLinkException;
 import edu.java.bot.exception.UserNotFoundException;
-import edu.java.bot.service.link.LinkUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserService {
     private final Map<Long, List<String>> map = new HashMap<>();
 
@@ -18,7 +19,7 @@ public class UserService {
 
     public List<String> listTrackedLinkByUserId(long userId) throws UserNotFoundException {
         if (!isUserRegistered(userId)) {
-            throw new UserNotFoundException("Пользователь не зарегистрирован");
+            throw new UserNotFoundException("Вы не зарегистрированы");
         }
         return map.get(userId);
     }
@@ -32,7 +33,6 @@ public class UserService {
     }
 
     public void addLink(long userId, String link) throws UserNotFoundException, AlreadyTrackedLinkException {
-        LinkUtils.checkLinkCorrectnessOrThrow(link);
         List<String> links = listTrackedLinkByUserId(userId);
         if (links.contains(link)) {
             throw new AlreadyTrackedLinkException("Указанная ссылка уже отслеживается");
@@ -42,7 +42,6 @@ public class UserService {
 
     public void deleteLink(long userId, String link)
         throws UserNotFoundException, NotTrackedLinkException {
-        LinkUtils.checkLinkCorrectnessOrThrow(link);
         List<String> links = listTrackedLinkByUserId(userId);
         if (!links.contains(link)) {
             throw new NotTrackedLinkException("Указанной ссылки нет в списке отслеживаемых");
@@ -50,12 +49,8 @@ public class UserService {
         links.remove(link);
     }
 
-    public static UserService getInstance() {
-        return UserServiceHolder.INSTANCE;
-    }
-
-    private static class UserServiceHolder {
-        private static final UserService INSTANCE = new UserService();
+    public void clear() {
+        map.clear();
     }
 
 }

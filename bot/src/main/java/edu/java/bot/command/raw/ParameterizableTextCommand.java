@@ -1,7 +1,7 @@
 package edu.java.bot.command.raw;
 
 import com.pengrad.telegrambot.model.Update;
-import edu.java.bot.command.client.CommandEnum;
+import edu.java.bot.command.ActionCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,9 +15,9 @@ public record ParameterizableTextCommand(long chatId, @NotNull String command,
         if (messageText.isEmpty()) {
             throw new IllegalArgumentException("Передана пустая команда");
         }
-        if (messageText.charAt(0) != CommandEnum.FIRST_COMMAND_SYMBOL) {
+        if (messageText.charAt(0) != ActionCommand.FIRST_COMMAND_SYMBOL) {
             throw new IllegalArgumentException("Команда должна начинаться с '%c'"
-                .formatted(CommandEnum.FIRST_COMMAND_SYMBOL));
+                .formatted(ActionCommand.FIRST_COMMAND_SYMBOL));
         }
         String[] tokens = messageText.split("\\s+", 2);
         String command = tokens[0].substring(1);

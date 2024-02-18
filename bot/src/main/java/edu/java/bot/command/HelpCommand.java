@@ -1,16 +1,42 @@
 package edu.java.bot.command;
 
 import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.command.client.CommandEnum;
 import edu.java.bot.command.raw.ParameterizableTextCommand;
-import java.util.Arrays;
+import edu.java.bot.service.link.AbstractLinkValidator;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Component;
 
+@Component
+@ComponentScan(basePackages = {"edu.java.bot.service.link", "edu.java.bot.command"})
 public class HelpCommand extends AbstractValidatedCommand {
-
     private static final String COMMAND_REPRESENTATION_FORMAT =
-        CommandEnum.FIRST_COMMAND_SYMBOL + "%s -- %s";
+        ActionCommand.FIRST_COMMAND_SYMBOL + "%s -- %s;";
+
+    private static final String CURRENT_AVAILABLE_LINKS_TEXT =
+        "\nНа данный момент для отслеживания доступны только следующие сервисы:\n";
+
+    private final Set<ActionCommand> commands;
+    private final Set<AbstractLinkValidator> linkValidatorSet;
+
+    @Autowired
+    public HelpCommand(Set<ActionCommand> commands, Set<AbstractLinkValidator> linkValidatorSet) {
+        this.commands = commands;
+        this.linkValidatorSet = linkValidatorSet;
+    }
+
+    @Override
+    public String command() {
+        return "help";
+    }
+
+    @Override
+    public String description() {
+        return "вывести окно с командами";
+    }
 
     @Override
     public SendMessage execute(@NotNull ParameterizableTextCommand textCommand) {
@@ -27,15 +53,15 @@ public class HelpCommand extends AbstractValidatedCommand {
     }
 
     private String buildHelpText() {
-        return Arrays.stream(CommandsLazyInitializer.COMMANDS)
-            .map(commandEnum -> COMMAND_REPRESENTATION_FORMAT.formatted(
-                commandEnum.name().toLowerCase(),
-                commandEnum.getDescription()
-            )).collect(Collectors.joining("\n"));
-    }
-
-    private static class CommandsLazyInitializer {
-        private static final CommandEnum[] COMMANDS = CommandEnum.values();
+        return commands.stream()
+            .map(command -> COMMAND_REPRESENTATION_FORMAT.formatted(
+                command.command().toLowerCase(),
+                command.description()
+            )).collect(Collectors.joining("\n"))
+            + CURRENT_AVAILABLE_LINKS_TEXT
+            + linkValidatorSet.stream()
+            .map(AbstractLinkValidator::getHostName)
+            .collect(Collectors.joining("; "));
     }
 
 }

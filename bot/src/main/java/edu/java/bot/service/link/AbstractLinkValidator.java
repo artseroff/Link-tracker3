@@ -12,7 +12,7 @@ public abstract class AbstractLinkValidator {
         this.next = next;
     }
 
-    abstract String getHostName();
+    public abstract String getHostName();
 
     public final boolean isValid(URL url) {
         if (getHostName().equals(url.getHost())) {
