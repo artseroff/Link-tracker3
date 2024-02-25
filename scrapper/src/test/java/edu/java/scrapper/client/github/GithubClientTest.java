@@ -91,8 +91,8 @@ class GithubClientTest {
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .withBody(responseBody)));
 
-        // Arrange
-        RepositoryEventResponse actualResponse = client.fetchLastModified("torvalds", "linux");
+        // Act
+        RepositoryEventResponse actualResponse = client.fetchLastModified(owner, repo);
 
         // Assert
         Assertions.assertEquals(expectedResponse, actualResponse);
@@ -124,8 +124,8 @@ class GithubClientTest {
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .withBody(responseBody)));
 
-        // Arrange
-        RepositoryEventResponse actualResponse = client.fetchLastModified("torvalds", "linux");
+        // Act
+        RepositoryEventResponse actualResponse = client.fetchLastModified(owner, repo);
 
         // Assert
         Assertions.assertNull(actualResponse);

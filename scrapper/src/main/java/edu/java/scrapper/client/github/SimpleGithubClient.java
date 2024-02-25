@@ -15,8 +15,11 @@ public class SimpleGithubClient extends AbstractClient implements GithubClient {
     @Override public RepositoryEventResponse fetchLastModified(String owner, String repo) {
 
         Mono<RepositoryEventResponse[]> bodyToMono = webClient.get()
-            .uri(uriBuilder -> uriBuilder.path("/repos/%s/%s/events".formatted(owner, repo)).queryParam("per_page", 1)
-                .build()).retrieve().onStatus(
+            .uri(uriBuilder -> uriBuilder.path("/repos/%s/%s/events".formatted(owner, repo))
+                .queryParam("per_page", 1)
+                .build())
+            .retrieve()
+            .onStatus(
                 HttpStatusCode::isError,
                 response -> response.bodyToMono(String.class)
                     .flatMap(error -> Mono.error(new WebClientRuntimeException(error)))

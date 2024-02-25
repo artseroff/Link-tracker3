@@ -94,7 +94,7 @@ public class SimpleStackoverflowClientTest {
             new QuestionAnswerResponse.Owner(expectedOwnerName)
         );
 
-        // Arrange
+        // Act
         QuestionAnswerResponse actualResponse = client.fetchLastModified(questionId);
 
         // Assert
@@ -130,7 +130,7 @@ public class SimpleStackoverflowClientTest {
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .withBody(responseBody)));
 
-        // Arrange
+        // Act
         QuestionAnswerResponse actualResponse = client.fetchLastModified(questionId);
 
         // Assert
