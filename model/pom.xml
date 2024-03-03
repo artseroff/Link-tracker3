@@ -7,6 +7,7 @@
         <groupId>edu.java</groupId>
         <artifactId>root</artifactId>
         <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <groupId>org.example</groupId>
