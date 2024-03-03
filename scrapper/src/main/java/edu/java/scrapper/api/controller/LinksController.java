@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequestMapping("/links")
+@Slf4j
 public class LinksController {
     @Operation(summary = "Добавить отслеживание ссылки")
     @ApiResponse(
@@ -48,6 +50,7 @@ public class LinksController {
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @PostMapping
     ResponseEntity<LinkResponse> add(@Valid @RequestBody LinkDto linkDto) {
+        log.info("Добавление ссылки {}", linkDto);
         return ResponseEntity.ok(new LinkResponse(linkDto.chatId(), linkDto.url()));
     }
 
@@ -72,9 +75,10 @@ public class LinksController {
         description = "Ошибка сервера",
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @DeleteMapping
-    ResponseEntity<LinkResponse> linksDelete(
+    ResponseEntity<LinkResponse> delete(
         @Valid @RequestBody LinkDto linkDto
     ) {
+        log.info("Удаление ссылки {}", linkDto);
         return ResponseEntity.ok(new LinkResponse(linkDto.chatId(), linkDto.url()));
     }
 
@@ -94,10 +98,11 @@ public class LinksController {
         description = "Ошибка сервера",
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @GetMapping("/{id}")
-    ResponseEntity<ListLinksResponse> linksGet(
+    ResponseEntity<ListLinksResponse> getLinks(
         @PathVariable("id") Long tgChatId
     ) {
         try {
+            log.info("Получение всех отслеживаемых ссылок у чата {}", tgChatId);
             return ResponseEntity.ok(new ListLinksResponse(List.of(new LinkResponse(1L, new URI("ya.ru")))));
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);

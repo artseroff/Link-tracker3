@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BotClientConfig {
     @Value("${client.bot.baseUrl}")
-    private String baseGithubUrl;
+    private String baseUrl;
 
     @Bean
     public BotClient githubClient() {
-        return new BotClient(baseGithubUrl);
+        return new BotClient(baseUrl);
     }
 }

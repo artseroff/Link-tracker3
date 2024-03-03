@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequestMapping("/update")
+@Slf4j
 public class UpdateController {
     @Operation(summary = "Отправить обновление")
     @ApiResponse(responseCode = "200", description = "Обновление обработано")
@@ -32,6 +34,7 @@ public class UpdateController {
     )
     @PostMapping()
     public ResponseEntity<Void> processUpdate(@Valid @RequestBody LinkUpdateRequest request) {
+        log.info("Запрос на обновление {}", request);
         return ResponseEntity.ok().build();
     }
 }

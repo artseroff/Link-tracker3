@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Validated
 @RequestMapping("/tg-chat/{id}")
+@Slf4j
 public class TgChatApiController {
     @Operation(summary = "Зарегистрировать чат")
     @ApiResponse(responseCode = "200", description = "Чат зарегистрирован")
@@ -36,6 +38,7 @@ public class TgChatApiController {
     )
     @PostMapping()
     public ResponseEntity<Void> create(@PathVariable("id") Long id) {
+        log.info("Создание чата {}", id);
         return ResponseEntity.ok().build();
     }
 
@@ -57,6 +60,7 @@ public class TgChatApiController {
     )
     @DeleteMapping()
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        log.info("Удаление чата {}", id);
         return ResponseEntity.ok().build();
     }
 }
