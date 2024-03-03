@@ -17,3 +17,7 @@ logging:
 springdoc:
   swagger-ui:
     path: /swagger-ui
+
+client:
+  bot:
+    baseUrl: http://localhost:8090
