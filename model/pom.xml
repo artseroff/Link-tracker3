@@ -10,8 +10,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>org.example</groupId>
     <artifactId>model</artifactId>
+    <version>${revision}</version>
 
     <dependencies>
         <dependency>
