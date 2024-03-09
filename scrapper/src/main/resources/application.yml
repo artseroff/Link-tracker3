@@ -19,3 +19,9 @@ client:
     baseUrl: https://api.github.com
   stackoverflow:
     baseUrl: https://api.stackexchange.com/2.3/
+  bot:
+    baseUrl: http://localhost:8090
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
