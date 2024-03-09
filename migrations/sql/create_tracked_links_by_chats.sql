@@ -3,5 +3,7 @@ CREATE TABLE tracked_links_by_chats
 (
 	chat_id integer not null,
 	link_id integer not null,
-	PRIMARY KEY (chat_id, link_id)
+	PRIMARY KEY (chat_id, link_id),
+    FOREIGN KEY (chat_id) REFERENCES chats (id),
+    FOREIGN KEY (link_id) REFERENCES links (id)
 )
