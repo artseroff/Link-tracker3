@@ -1,6 +1,9 @@
 package edu.java.scrapper.api.controller;
 
 import edu.java.response.ApiErrorResponse;
+import edu.java.scrapper.api.service.exception.EntityAlreadyExistException;
+import edu.java.scrapper.api.service.exception.EntityNotFoundException;
+import edu.java.scrapper.api.service.jdbc.JdbcTgChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/tg-chat/{id}")
 @Slf4j
 public class TgChatApiController {
+    private final JdbcTgChatService chatService;
+
+    public TgChatApiController(JdbcTgChatService chatService) {
+        this.chatService = chatService;
+    }
+
     @Operation(summary = "Зарегистрировать чат")
     @ApiResponse(responseCode = "200", description = "Чат зарегистрирован")
     @ApiResponse(
@@ -37,8 +46,8 @@ public class TgChatApiController {
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))
     )
     @PostMapping()
-    public ResponseEntity<Void> create(@PathVariable("id") Long id) {
-        log.info("Создание чата {}", id);
+    public ResponseEntity<Void> create(@PathVariable("id") Long id) throws EntityAlreadyExistException {
+        chatService.register(id);
         return ResponseEntity.ok().build();
     }
 
@@ -59,8 +68,8 @@ public class TgChatApiController {
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class))
     )
     @DeleteMapping()
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        log.info("Удаление чата {}", id);
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) throws EntityNotFoundException {
+        chatService.unregister(id);
         return ResponseEntity.ok().build();
     }
 }

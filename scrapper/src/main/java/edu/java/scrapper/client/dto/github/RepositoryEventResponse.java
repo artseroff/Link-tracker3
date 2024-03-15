@@ -1,4 +1,4 @@
-package edu.java.scrapper.dto.github;
+package edu.java.scrapper.client.dto.github;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

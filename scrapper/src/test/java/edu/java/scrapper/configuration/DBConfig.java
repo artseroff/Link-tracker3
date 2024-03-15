@@ -1,11 +1,11 @@
 package edu.java.scrapper.configuration;
 
-import edu.java.scrapper.IntegrationTest;
+import edu.java.scrapper.integration.IntegrationTest;
+import javax.sql.DataSource;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import javax.sql.DataSource;
 
 @Configuration
 public class DBConfig {
