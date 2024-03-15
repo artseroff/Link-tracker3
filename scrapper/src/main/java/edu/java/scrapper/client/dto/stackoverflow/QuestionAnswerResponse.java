@@ -1,4 +1,4 @@
-package edu.java.scrapper.dto.stackoverflow;
+package edu.java.scrapper.client.dto.stackoverflow;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

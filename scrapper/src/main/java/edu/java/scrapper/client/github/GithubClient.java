@@ -1,6 +1,6 @@
 package edu.java.scrapper.client.github;
 
-import edu.java.scrapper.dto.github.RepositoryEventResponse;
+import edu.java.scrapper.client.dto.github.RepositoryEventResponse;
 
 public interface GithubClient {
     RepositoryEventResponse fetchLastModified(String owner, String repo);

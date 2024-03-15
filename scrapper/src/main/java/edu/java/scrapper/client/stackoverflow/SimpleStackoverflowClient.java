@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import edu.java.scrapper.client.AbstractClient;
 import edu.java.scrapper.client.WebClientRuntimeException;
-import edu.java.scrapper.dto.stackoverflow.QuestionAnswerResponse;
+import edu.java.scrapper.client.dto.stackoverflow.QuestionAnswerResponse;
 import org.springframework.http.HttpStatusCode;
 import reactor.core.publisher.Mono;
 

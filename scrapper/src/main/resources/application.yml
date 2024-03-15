@@ -9,9 +9,13 @@ spring:
     name: scrapper
   liquibase:
     enabled: false
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
-
+  #  autoconfigure:
+  #    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: "jdbc:postgresql://localhost:5432/scrapper"
+    username: "postgres"
+    password: "postgres"
 
 server:
   port: 8080

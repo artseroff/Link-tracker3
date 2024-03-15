@@ -1,4 +1,5 @@
-package edu.java.scrapper;
+package edu.java.scrapper.integration;
+
 import edu.java.scrapper.configuration.DBConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,16 +19,21 @@ public class LiquibaseIntegrationTest extends IntegrationTest {
 
     @Test
     public void addChatTest() {
-        int id = 1;
-        int chatId = 12345;
-        jdbcClient.sql("INSERT INTO chats (chat_id) VALUES (?)")
-            .param(chatId)
+        // Assert
+        int expectedChatId = 12345;
+
+        // Act
+        jdbcClient.sql("INSERT INTO chats (id) VALUES (?)")
+            .param(expectedChatId)
             .update();
+
         Long actualChatId = jdbcClient
-            .sql("SELECT chat_id FROM chats WHERE id=?")
-            .param(id)
+            .sql("SELECT id FROM chats WHERE id=?")
+            .param(expectedChatId)
             .query(Long.class)
             .single();
-        Assertions.assertEquals(chatId, actualChatId);
+
+        // Arrange
+        Assertions.assertEquals(expectedChatId, actualChatId);
     }
 }

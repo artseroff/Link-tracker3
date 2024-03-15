@@ -13,7 +13,7 @@
     <changeSet id="create_links" author="artseroff">
         <sqlFile path="sql/create_links.sql" relativeToChangelogFile="true"/>
     </changeSet>
-    <changeSet id="create_tracked_links_by_chats" author="artseroff">
-        <sqlFile path="sql/create_tracked_links_by_chats.sql" relativeToChangelogFile="true"/>
+    <changeSet id="create_subscriptions" author="artseroff">
+        <sqlFile path="sql/create_subscriptions.sql" relativeToChangelogFile="true"/>
     </changeSet>
 </databaseChangeLog>

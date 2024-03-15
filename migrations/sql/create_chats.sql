@@ -1,8 +1,6 @@
 --liquibase formatted sql
-CREATE TABLE Chats
+CREATE TABLE IF NOT EXISTS chats
 (
-	id serial,
-	chat_id bigint not null,
-	PRIMARY KEY(id),
-	UNIQUE(chat_id)
+	id bigint not null,
+	PRIMARY KEY(id)
 )

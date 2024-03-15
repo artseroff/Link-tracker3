@@ -2,7 +2,7 @@ package edu.java.bot.client.scrapper;
 
 import edu.java.bot.client.AbstractClient;
 import edu.java.general.ApiException;
-import edu.java.general.LinkDto;
+import edu.java.general.LinkSubscriptionDto;
 import edu.java.response.LinkResponse;
 import edu.java.response.ListLinksResponse;
 import org.springframework.http.HttpMethod;
@@ -61,12 +61,12 @@ public class ScrapperClient extends AbstractClient {
             .block();
     }
 
-    public LinkResponse addLink(LinkDto linkDto) {
+    public LinkResponse addLink(LinkSubscriptionDto linkSubscriptionDto) {
         return this.webClient
             .post()
             .uri(LINKS)
             .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(linkDto), LinkDto.class)
+            .body(Mono.just(linkSubscriptionDto), LinkSubscriptionDto.class)
             .retrieve()
             .onStatus(
                 HttpStatusCode::isError,
@@ -76,12 +76,12 @@ public class ScrapperClient extends AbstractClient {
             .block();
     }
 
-    public LinkResponse deleteLink(LinkDto linkDto) {
+    public LinkResponse deleteLink(LinkSubscriptionDto linkSubscriptionDto) {
         return this.webClient
             .method(HttpMethod.DELETE)
             .uri(LINKS)
             .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(linkDto), LinkDto.class)
+            .body(Mono.just(linkSubscriptionDto), LinkSubscriptionDto.class)
             .retrieve()
             .onStatus(
                 HttpStatusCode::isError,
