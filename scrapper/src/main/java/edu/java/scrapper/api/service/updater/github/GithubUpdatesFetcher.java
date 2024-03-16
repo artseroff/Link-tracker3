@@ -38,7 +38,7 @@ public class GithubUpdatesFetcher extends AbstractUpdatesFetcher {
             throw new EntityNotFoundException("Ссылка %s указывает на не существующий репозиторий"
                 .formatted(linkDto.url()));
         }
-        return defineShouldMakeUpdateRequest(linkDto, repositoryEventResponse.createdAt(), "Репозиторий обновился");
+        return makeLinkUpdate(linkDto, repositoryEventResponse.createdAt(), "Репозиторий обновился");
     }
 
     private RepoSearchRequest buildRepoSearchRequest(URI url) throws NotSupportedLinkException {
