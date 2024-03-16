@@ -31,7 +31,6 @@ public class JdbcTgChatService implements TgChatService {
     public void unregister(long chatId) throws EntityNotFoundException {
         chatRepository.findById(chatId)
             .orElseThrow(() -> new EntityNotFoundException("Чат не найден"));
-        chatRepository.remove(chatId);
 
         linkService.listAll(chatId)
             .forEach(linkDto -> {
@@ -41,6 +40,8 @@ public class JdbcTgChatService implements TgChatService {
                     throw new RuntimeException(e);
                 }
             });
+
+        chatRepository.remove(chatId);
     }
 
 }

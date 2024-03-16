@@ -63,10 +63,33 @@ public class JdbcLinkRepository implements LinkRepository {
     }
 
     @Override
-    public Collection<LinkDto> findAllBeforeLastSchedulerCheck(OffsetDateTime lastSchedulerCheck) {
-        return jdbcClient.sql("SELECT * FROM links WHERE last_scheduler_check IS NULL OR last_scheduler_check <= ?")
+    public Collection<LinkDto> findAllBeforeLastSchedulerCheck(OffsetDateTime lastSchedulerCheck, long linksLimit) {
+        String sql = """
+            SELECT *
+                FROM links
+                WHERE last_scheduler_check IS NULL OR last_scheduler_check <= ?
+                ORDER BY last_scheduler_check NULLS FIRST
+                LIMIT ?
+            """;
+        return jdbcClient.sql(sql)
             .param(lastSchedulerCheck)
+            .param(linksLimit)
             .query(LinkDto.class)
             .list();
+    }
+
+    @Override
+    public void updateModifiedAndSchedulerCheckDates(long id, OffsetDateTime updatedAt, OffsetDateTime checkedAt) {
+        String sql = """
+            UPDATE links
+                SET last_updated_at = ?,
+                    last_scheduler_check = ?
+                WHERE id = ?
+            """;
+        jdbcClient.sql(sql)
+            .param(updatedAt)
+            .param(checkedAt)
+            .param(id)
+            .update();
     }
 }

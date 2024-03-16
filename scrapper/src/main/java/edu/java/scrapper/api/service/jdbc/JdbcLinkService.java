@@ -37,10 +37,6 @@ public class JdbcLinkService implements LinkService {
         this.subscriptionRepository = subscriptionRepository;
     }
 
-    // update -
-    // берем из LinkRepo, окторые давно не проверялись
-    // проверяем их
-    // по тем, в которых есть обновления, ищем их чаты в цикле
     @Override
     public LinkResponse track(long chatId, URI url) throws EntityAlreadyExistException, EntityNotFoundException {
         chatRepository.findById(chatId)
