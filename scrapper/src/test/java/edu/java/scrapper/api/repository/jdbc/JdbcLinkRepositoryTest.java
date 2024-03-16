@@ -64,13 +64,14 @@ public class JdbcLinkRepositoryTest {
     void addThenFindByIdAndUrlTest() {
         // Arrange
         long id = 1L;
-        URI url = URI.create("https://ya.ru");
-        OffsetDateTime time = OffsetDateTime.now(ZoneOffset.UTC)
+        URI url = URI.create("https://github.com");
+
+        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC)
             .truncatedTo(ChronoUnit.SECONDS);
-        LinkDto expectedLink = new LinkDto(id, url, time, time);
+        LinkDto expectedLink = new LinkDto(id, url, nowTime, nowTime);
 
         // Act
-        LinkDto addedLink = linkRepository.add(url, time, time);
+        LinkDto addedLink = linkRepository.add(url, null, null);
         Optional<LinkDto> foundLinkByUrl = linkRepository.findByUrl(url);
         Optional<LinkDto> foundLinkById = linkRepository.findById(id);
 
@@ -136,6 +137,7 @@ public class JdbcLinkRepositoryTest {
     @Test
     void findAllBeforeLastSchedulerCheckTest() {
         // Arrange
+        int linksLimit  = 2;
         long id1 = 1L;
         long id2 = 2L;
         long id3 = 3L;
@@ -155,7 +157,7 @@ public class JdbcLinkRepositoryTest {
         LinkDto linkCheckedTwoHoursAgo = new LinkDto(id2, githubUrl2, currentTime, twoHoursAgoTime);
         LinkDto linkCheckedThreeHoursAgo = new LinkDto(id3, stackoverflowUrl1, currentTime, threeHoursAgoTime);
         LinkDto linkNotChecked = new LinkDto(id4, stackoverflowUrl2, currentTime, null);
-        List<LinkDto> expectedLinks = List.of(linkCheckedTwoHoursAgo, linkCheckedThreeHoursAgo, linkNotChecked);
+        List<LinkDto> expectedLinks = List.of(linkNotChecked, linkCheckedThreeHoursAgo);
 
         // Act
         linkRepository.add(
@@ -173,12 +175,35 @@ public class JdbcLinkRepositoryTest {
             linkCheckedThreeHoursAgo.lastUpdatedAt(),
             linkCheckedThreeHoursAgo.lastSchedulerCheck()
         );
-        linkRepository.add(linkNotChecked.url(), linkNotChecked.lastUpdatedAt(), linkNotChecked.lastSchedulerCheck());
+        linkRepository.add(
+            linkNotChecked.url(),
+            linkNotChecked.lastUpdatedAt(),
+            linkNotChecked.lastSchedulerCheck()
+        );
 
-        Collection<LinkDto> actualLinks = linkRepository.findAllBeforeLastSchedulerCheck(twoHoursAgoTime);
+        Collection<LinkDto> actualLinks = linkRepository.findAllBeforeLastSchedulerCheck(twoHoursAgoTime, linksLimit);
 
         // Assert
         Assertions.assertEquals(expectedLinks, actualLinks);
+    }
+
+    @Test
+    void updateTest() {
+        // Arrange
+        long id = 1L;
+        URI url = URI.create("https://github.com");
+        OffsetDateTime time = OffsetDateTime.now(ZoneOffset.UTC)
+            .truncatedTo(ChronoUnit.SECONDS);
+        LinkDto expectedLink = new LinkDto(id, url, time, time);
+
+        // Act
+        LinkDto addedLink = linkRepository.add(url, null, null);
+        linkRepository.updateModifiedAndSchedulerCheckDates(addedLink.id(), time,time);
+        Optional<LinkDto> actualLink = linkRepository.findById(addedLink.id());
+
+        // Assert
+        Assertions.assertTrue(actualLink.isPresent());
+        Assertions.assertEquals(expectedLink, actualLink.get());
     }
 
 }
