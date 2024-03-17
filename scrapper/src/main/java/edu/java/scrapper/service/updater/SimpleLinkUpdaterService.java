@@ -29,7 +29,7 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
     private final AbstractUpdatesFetcher headUpdatesFetcher;
 
     public SimpleLinkUpdaterService(
-        LinkRepository linkRepository,
+        @Qualifier("jooqLinkRepository") LinkRepository linkRepository,
         @Qualifier("jooqSubscriptionRepository") SubscriptionRepository subscriptionRepository,
         ApplicationConfig config,
         BotClient botClient,

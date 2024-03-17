@@ -2,27 +2,24 @@ package edu.java.scrapper.domain.jooq;
 
 import edu.java.scrapper.domain.AbstractLinkRepositoryTest;
 import edu.java.scrapper.domain.jdbc.JdbcLinkRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
 public class JooqLinkRepositoryTest extends AbstractLinkRepositoryTest {
 
-    private final JdbcClient jdbcClient;
-
+    private final DSLContext dslContext;
     @Autowired
-    public JooqLinkRepositoryTest(JdbcLinkRepository linkRepository, JdbcClient jdbcClient) {
+    public JooqLinkRepositoryTest(JdbcLinkRepository linkRepository, DSLContext dslContext) {
         super(linkRepository);
-        this.jdbcClient = jdbcClient;
+        this.dslContext = dslContext;
     }
 
-    @BeforeEach
+    @Override
     public void truncateTableLinks() {
-        jdbcClient.sql("truncate table links restart identity CASCADE")
-            .update();
+        dslContext.truncate(Tables.LINKS).restartIdentity().cascade().execute();
     }
 }

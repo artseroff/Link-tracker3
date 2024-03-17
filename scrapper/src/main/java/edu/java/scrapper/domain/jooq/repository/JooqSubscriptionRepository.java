@@ -5,14 +5,10 @@ import edu.java.scrapper.domain.dto.ChatDto;
 import edu.java.scrapper.domain.dto.LinkDto;
 import edu.java.scrapper.domain.dto.SubscriptionDto;
 import edu.java.scrapper.domain.jooq.Tables;
-import edu.java.scrapper.domain.jooq.tables.Chats;
-import edu.java.scrapper.domain.jooq.tables.Subscriptions;
-import org.jooq.DSLContext;
-import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.stereotype.Repository;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class JooqSubscriptionRepository implements SubscriptionRepository {
@@ -23,13 +19,12 @@ public class JooqSubscriptionRepository implements SubscriptionRepository {
         this.dslContext = dslContext;
     }
 
-
     @Override
     public Optional<SubscriptionDto> findEntity(SubscriptionDto subscriptionDto) {
         return dslContext
             .selectFrom(Tables.SUBSCRIPTIONS)
-            .where(Tables.SUBSCRIPTIONS.CHAT_ID.eq((int) subscriptionDto.chatId())
-                .and(Tables.SUBSCRIPTIONS.LINK_ID.eq((int) subscriptionDto.linkId())))
+            .where(Tables.SUBSCRIPTIONS.CHAT_ID.eq(subscriptionDto.chatId())
+                .and(Tables.SUBSCRIPTIONS.LINK_ID.eq(subscriptionDto.linkId())))
             .fetchOptional()
             .map(subscriptionsRecord -> subscriptionsRecord.into(SubscriptionDto.class));
     }
@@ -39,7 +34,7 @@ public class JooqSubscriptionRepository implements SubscriptionRepository {
         return dslContext
             .select(Tables.SUBSCRIPTIONS.CHAT_ID)
             .from(Tables.SUBSCRIPTIONS)
-            .where(Tables.SUBSCRIPTIONS.LINK_ID.eq((int) linkId))
+            .where(Tables.SUBSCRIPTIONS.LINK_ID.eq(linkId))
             .fetchInto(ChatDto.class);
     }
 
@@ -50,12 +45,11 @@ public class JooqSubscriptionRepository implements SubscriptionRepository {
             .from(Tables.SUBSCRIPTIONS)
             .join(Tables.LINKS).on(
                 Tables.LINKS.ID.eq(Tables.SUBSCRIPTIONS.LINK_ID)
-                    .and(Tables.SUBSCRIPTIONS.CHAT_ID.eq((int) chatId))
+                    .and(Tables.SUBSCRIPTIONS.CHAT_ID.eq(chatId))
             )
             .orderBy(Tables.SUBSCRIPTIONS.LINK_ID)
             .fetchInto(LinkDto.class);
     }
-
 
     @Override
     public SubscriptionDto add(SubscriptionDto subscriptionDto) {
@@ -68,16 +62,14 @@ public class JooqSubscriptionRepository implements SubscriptionRepository {
         return optionalSubscriptionDto.get();
     }
 
-
     @Override
     public void remove(SubscriptionDto subscriptionDto) {
         dslContext
             .deleteFrom(Tables.SUBSCRIPTIONS)
-            .where(Tables.SUBSCRIPTIONS.CHAT_ID.eq((int) subscriptionDto.chatId())
-                .and(Tables.SUBSCRIPTIONS.LINK_ID.eq((int) subscriptionDto.linkId())))
+            .where(Tables.SUBSCRIPTIONS.CHAT_ID.eq(subscriptionDto.chatId())
+                .and(Tables.SUBSCRIPTIONS.LINK_ID.eq(subscriptionDto.linkId())))
             .execute();
     }
-
 
     @Override
     public Collection<SubscriptionDto> findAll() {

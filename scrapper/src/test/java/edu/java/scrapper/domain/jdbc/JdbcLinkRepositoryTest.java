@@ -1,7 +1,6 @@
 package edu.java.scrapper.domain.jdbc;
 
 import edu.java.scrapper.domain.AbstractLinkRepositoryTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -19,7 +18,7 @@ public class JdbcLinkRepositoryTest extends AbstractLinkRepositoryTest {
         this.jdbcClient = jdbcClient;
     }
 
-    @BeforeEach
+    @Override
     public void truncateTableLinks() {
         jdbcClient.sql("truncate table links restart identity CASCADE")
             .update();

@@ -4,23 +4,17 @@ import edu.java.scrapper.domain.TgChatRepository;
 import edu.java.scrapper.domain.dto.ChatDto;
 import edu.java.scrapper.domain.jooq.Tables;
 import edu.java.scrapper.domain.jooq.tables.Chats;
-import edu.java.scrapper.domain.jooq.tables.records.ChatsRecord;
-import org.jooq.DSLContext;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.Optional;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class JooqTgChatRepository implements TgChatRepository {
     private final DSLContext dslContext;
-    private final JdbcClient jdbcClient;
 
-    public JooqTgChatRepository(DSLContext dslContext, JdbcClient jdbcClient) {
+    public JooqTgChatRepository(DSLContext dslContext) {
         this.dslContext = dslContext;
-        this.jdbcClient = jdbcClient;
     }
 
     @Override

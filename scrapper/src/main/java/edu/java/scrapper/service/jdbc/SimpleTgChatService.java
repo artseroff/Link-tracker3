@@ -15,7 +15,10 @@ public class SimpleTgChatService implements TgChatService {
 
     private final SimpleLinkService linkService;
 
-    public SimpleTgChatService(@Qualifier("jooqTgChatRepository") TgChatRepository chatRepository, SimpleLinkService linkService) {
+    public SimpleTgChatService(
+        @Qualifier("jooqTgChatRepository") TgChatRepository chatRepository,
+        SimpleLinkService linkService
+    ) {
         this.chatRepository = chatRepository;
         this.linkService = linkService;
     }
