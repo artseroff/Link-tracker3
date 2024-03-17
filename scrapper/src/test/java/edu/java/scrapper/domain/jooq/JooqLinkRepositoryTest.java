@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class JooqLinkRepositoryTest extends AbstractLinkRepositoryTest {
 
     private final DSLContext dslContext;
+
     @Autowired
     public JooqLinkRepositoryTest(JdbcLinkRepository linkRepository, DSLContext dslContext) {
         super(linkRepository);

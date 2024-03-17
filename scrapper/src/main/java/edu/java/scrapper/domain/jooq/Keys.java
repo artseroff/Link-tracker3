@@ -42,7 +42,8 @@ public class Keys {
     public static final UniqueKey<LinksRecord> CONSTRAINT_45 =
         Internal.createUniqueKey(Links.LINKS, DSL.name("CONSTRAINT_45"), new TableField[] {Links.LINKS.URL}, true);
     public static final UniqueKey<SubscriptionsRecord> CONSTRAINT_30 =
-        Internal.createUniqueKey(Subscriptions.SUBSCRIPTIONS,
+        Internal.createUniqueKey(
+            Subscriptions.SUBSCRIPTIONS,
             DSL.name("CONSTRAINT_30"),
             new TableField[] {Subscriptions.SUBSCRIPTIONS.CHAT_ID, Subscriptions.SUBSCRIPTIONS.LINK_ID},
             true

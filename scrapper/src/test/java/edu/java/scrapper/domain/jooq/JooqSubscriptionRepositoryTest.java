@@ -7,12 +7,12 @@ import edu.java.scrapper.domain.jooq.repository.JooqTgChatRepository;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.simple.JdbcClient;
 
 @SpringBootTest
 public class JooqSubscriptionRepositoryTest extends AbstractSubscriptionRepositoryTest {
 
     private final DSLContext dslContext;
+
     @Autowired
     public JooqSubscriptionRepositoryTest(
         JooqSubscriptionRepository subscriptionRepository,
