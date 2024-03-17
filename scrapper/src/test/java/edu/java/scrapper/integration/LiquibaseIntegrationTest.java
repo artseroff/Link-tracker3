@@ -1,13 +1,12 @@
 package edu.java.scrapper.integration;
 
-import edu.java.scrapper.configuration.DBConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-@SpringJUnitConfig(DBConfig.class)
+@SpringBootTest
 public class LiquibaseIntegrationTest extends IntegrationTest {
 
     private final JdbcClient jdbcClient;
@@ -35,5 +34,8 @@ public class LiquibaseIntegrationTest extends IntegrationTest {
 
         // Arrange
         Assertions.assertEquals(expectedChatId, actualChatId);
+        jdbcClient
+            .sql("truncate table chats restart identity cascade")
+            .update();
     }
 }

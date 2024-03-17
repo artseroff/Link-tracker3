@@ -3,7 +3,7 @@ package edu.java.scrapper.api.controller;
 import edu.java.response.ApiErrorResponse;
 import edu.java.scrapper.service.exception.EntityAlreadyExistException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
-import edu.java.scrapper.service.jdbc.SimpleTgChatService;
+import edu.java.scrapper.service.impl.SimpleTgChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
