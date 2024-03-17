@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,9 @@ public abstract class AbstractTgChatRepositoryTest extends IntegrationTest {
     protected AbstractTgChatRepositoryTest(TgChatRepository chatRepository) {
         this.chatRepository = chatRepository;
     }
+
+    @BeforeEach
+    public abstract void truncateTableChats();
 
     @Test
     void findById_NotExistedTest() {
