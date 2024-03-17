@@ -1,7 +1,7 @@
 package edu.java.scrapper.configuration;
 
-import edu.java.scrapper.api.service.updater.AbstractUpdatesFetcher;
-import edu.java.scrapper.api.service.updater.FetchersChainUtils;
+import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
+import edu.java.scrapper.service.updater.FetchersChainUtils;
 import java.util.Set;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
