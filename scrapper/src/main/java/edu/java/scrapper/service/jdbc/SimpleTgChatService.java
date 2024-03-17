@@ -4,6 +4,7 @@ import edu.java.scrapper.domain.TgChatRepository;
 import edu.java.scrapper.service.TgChatService;
 import edu.java.scrapper.service.exception.EntityAlreadyExistException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,7 @@ public class SimpleTgChatService implements TgChatService {
 
     private final SimpleLinkService linkService;
 
-    public SimpleTgChatService(TgChatRepository chatRepository, SimpleLinkService linkService) {
+    public SimpleTgChatService(@Qualifier("jooqTgChatRepository") TgChatRepository chatRepository, SimpleLinkService linkService) {
         this.chatRepository = chatRepository;
         this.linkService = linkService;
     }

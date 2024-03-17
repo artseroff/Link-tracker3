@@ -24,9 +24,9 @@ public abstract class AbstractSubscriptionRepositoryTest extends IntegrationTest
     private final TgChatRepository chatRepository;
 
     protected AbstractSubscriptionRepositoryTest(
-        JdbcSubscriptionRepository subscriptionRepository,
-        JdbcLinkRepository linkRepository,
-        JdbcTgChatRepository chatRepository
+        SubscriptionRepository subscriptionRepository,
+        LinkRepository linkRepository,
+        TgChatRepository chatRepository
     ) {
         this.subscriptionRepository = subscriptionRepository;
         this.linkRepository = linkRepository;

@@ -50,6 +50,7 @@
         <module>bot</module>
         <module>scrapper</module>
         <module>model</module>
+        <module>scrapper-jooq</module>
     </modules>
 
     <dependencyManagement>
@@ -105,6 +106,10 @@
             <artifactId>annotations</artifactId>
             <version>${jetbrains-annotations.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jooq</artifactId>
         </dependency>
 
         <!-- Tests -->

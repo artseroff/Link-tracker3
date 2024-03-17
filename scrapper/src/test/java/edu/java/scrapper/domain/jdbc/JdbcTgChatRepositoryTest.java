@@ -4,8 +4,10 @@ import edu.java.scrapper.domain.AbstractTgChatRepositoryTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
+@Transactional
 public class JdbcTgChatRepositoryTest extends AbstractTgChatRepositoryTest {
 
     private final JdbcClient jdbcClient;
