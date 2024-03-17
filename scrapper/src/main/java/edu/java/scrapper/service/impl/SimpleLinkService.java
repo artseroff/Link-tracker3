@@ -1,4 +1,4 @@
-package edu.java.scrapper.service.jdbc;
+package edu.java.scrapper.service.impl;
 
 import edu.java.response.LinkResponse;
 import edu.java.scrapper.domain.LinkRepository;

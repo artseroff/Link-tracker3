@@ -3,9 +3,6 @@ package edu.java.scrapper.domain;
 import edu.java.scrapper.domain.dto.ChatDto;
 import edu.java.scrapper.domain.dto.LinkDto;
 import edu.java.scrapper.domain.dto.SubscriptionDto;
-import edu.java.scrapper.domain.jdbc.JdbcLinkRepository;
-import edu.java.scrapper.domain.jdbc.JdbcSubscriptionRepository;
-import edu.java.scrapper.domain.jdbc.JdbcTgChatRepository;
 import edu.java.scrapper.integration.IntegrationTest;
 import java.net.URI;
 import java.util.Collection;
@@ -24,9 +21,9 @@ public abstract class AbstractSubscriptionRepositoryTest extends IntegrationTest
     private final TgChatRepository chatRepository;
 
     protected AbstractSubscriptionRepositoryTest(
-        JdbcSubscriptionRepository subscriptionRepository,
-        JdbcLinkRepository linkRepository,
-        JdbcTgChatRepository chatRepository
+        SubscriptionRepository subscriptionRepository,
+        LinkRepository linkRepository,
+        TgChatRepository chatRepository
     ) {
         this.subscriptionRepository = subscriptionRepository;
         this.linkRepository = linkRepository;
