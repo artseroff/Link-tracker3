@@ -1,9 +1,9 @@
 package edu.java.scrapper.api.controller;
 
 import edu.java.response.ApiErrorResponse;
-import edu.java.scrapper.api.service.exception.EntityAlreadyExistException;
-import edu.java.scrapper.api.service.exception.EntityNotFoundException;
-import edu.java.scrapper.api.service.jdbc.JdbcTgChatService;
+import edu.java.scrapper.service.exception.EntityAlreadyExistException;
+import edu.java.scrapper.service.exception.EntityNotFoundException;
+import edu.java.scrapper.service.jdbc.SimpleTgChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/tg-chat/{id}")
 @Slf4j
 public class TgChatApiController {
-    private final JdbcTgChatService chatService;
+    private final SimpleTgChatService chatService;
 
-    public TgChatApiController(JdbcTgChatService chatService) {
+    public TgChatApiController(SimpleTgChatService chatService) {
         this.chatService = chatService;
     }
 

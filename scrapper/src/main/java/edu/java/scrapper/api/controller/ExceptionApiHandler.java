@@ -1,9 +1,10 @@
 package edu.java.scrapper.api.controller;
 
 import edu.java.response.ApiErrorResponse;
-import edu.java.scrapper.api.service.exception.EntityAlreadyExistException;
-import edu.java.scrapper.api.service.exception.EntityNotFoundException;
-import edu.java.scrapper.api.service.exception.NotSupportedLinkException;
+import edu.java.scrapper.service.exception.CorruptedLinkException;
+import edu.java.scrapper.service.exception.EntityAlreadyExistException;
+import edu.java.scrapper.service.exception.EntityNotFoundException;
+import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ public class ExceptionApiHandler {
     private static final Map<Class<? extends Exception>, HttpStatus> EXCEPTION_HTTP_STATUS_MAP = Map.of(
         MethodArgumentTypeMismatchException.class, HttpStatus.BAD_REQUEST,
         NotSupportedLinkException.class, HttpStatus.BAD_REQUEST,
+        CorruptedLinkException.class, HttpStatus.BAD_REQUEST,
         EntityNotFoundException.class, HttpStatus.NOT_FOUND,
         EntityAlreadyExistException.class, HttpStatus.CONFLICT
     );

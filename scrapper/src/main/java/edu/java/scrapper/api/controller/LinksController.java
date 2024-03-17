@@ -4,10 +4,11 @@ import edu.java.general.LinkSubscriptionDto;
 import edu.java.response.ApiErrorResponse;
 import edu.java.response.LinkResponse;
 import edu.java.response.ListLinksResponse;
-import edu.java.scrapper.api.service.LinkService;
-import edu.java.scrapper.api.service.exception.EntityAlreadyExistException;
-import edu.java.scrapper.api.service.exception.EntityNotFoundException;
-import edu.java.scrapper.api.service.exception.NotSupportedLinkException;
+import edu.java.scrapper.service.LinkService;
+import edu.java.scrapper.service.exception.CorruptedLinkException;
+import edu.java.scrapper.service.exception.EntityAlreadyExistException;
+import edu.java.scrapper.service.exception.EntityNotFoundException;
+import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -59,7 +60,7 @@ public class LinksController {
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @PostMapping
     ResponseEntity<LinkResponse> add(@Valid @RequestBody LinkSubscriptionDto linkSubscriptionDto)
-        throws EntityAlreadyExistException, EntityNotFoundException, NotSupportedLinkException {
+        throws EntityAlreadyExistException, EntityNotFoundException, NotSupportedLinkException, CorruptedLinkException {
 
         LinkResponse tracked = linkService.track(linkSubscriptionDto.chatId(), linkSubscriptionDto.url());
         return ResponseEntity.ok().body(tracked);
