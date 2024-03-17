@@ -1,15 +1,13 @@
 package edu.java.scrapper.api.service.updater.github;
 
-import edu.java.request.LinkUpdateRequest;
-import edu.java.scrapper.api.repository.LinkRepository;
-import edu.java.scrapper.api.repository.SubscriptionRepository;
-import edu.java.scrapper.api.repository.dto.LinkDto;
 import edu.java.scrapper.api.service.exception.EntityNotFoundException;
 import edu.java.scrapper.api.service.exception.NotSupportedLinkException;
 import edu.java.scrapper.api.service.updater.AbstractUpdatesFetcher;
+import edu.java.scrapper.api.service.updater.LinkUpdateDescription;
 import edu.java.scrapper.client.dto.github.RepositoryEventResponse;
 import edu.java.scrapper.client.github.GithubClient;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -19,30 +17,36 @@ public class GithubUpdatesFetcher extends AbstractUpdatesFetcher {
     private final GithubClient githubClient;
 
     public GithubUpdatesFetcher(
-        SubscriptionRepository subscriptionRepository,
-        LinkRepository linkRepository,
         GithubClient githubClient
     ) {
-        super(subscriptionRepository, linkRepository);
         this.githubClient = githubClient;
     }
 
     @Override
-    public Optional<LinkUpdateRequest> fetchUpdatesFromLink(LinkDto linkDto)
+    public Optional<LinkUpdateDescription> fetchUpdatesFromLink(URI url, OffsetDateTime lastUpdatedAt)
         throws NotSupportedLinkException, EntityNotFoundException {
-        RepoSearchRequest request = buildRepoSearchRequest(linkDto.url());
+
+        String textPath = getProceedUrl(url, SITE_BASE_URL);
+
+        RepoSearchRequest request = buildRepoSearchRequest(textPath);
 
         RepositoryEventResponse repositoryEventResponse =
             githubClient.fetchLastModified(request.owner(), request.repo());
         if (repositoryEventResponse == null) {
-            throw new EntityNotFoundException("Ссылка %s указывает на не существующий репозиторий"
-                .formatted(linkDto.url()));
+            throw new EntityNotFoundException("Ссылка %s указывает на несуществующий репозиторий"
+                .formatted(url));
         }
-        return makeLinkUpdate(linkDto, repositoryEventResponse.createdAt(), "Репозиторий обновился");
+
+        return defineShouldMakeLinkUpdate(
+            textPath,
+            repositoryEventResponse.createdAt(),
+            lastUpdatedAt,
+            "Репозиторий обновился"
+        );
     }
 
-    private RepoSearchRequest buildRepoSearchRequest(URI url) throws NotSupportedLinkException {
-        String[] parts = getUrlPathParts(url, SITE_BASE_URL);
+    private RepoSearchRequest buildRepoSearchRequest(String textUrl) throws NotSupportedLinkException {
+        String[] parts = textUrl.split(URL_DELIMITER);
         if (parts.length != 2) {
             throw new NotSupportedLinkException(
                 "Ссылка должна указывать на репозиторий.\nПример: https://github.com/{owner}/{repo}");

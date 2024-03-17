@@ -1,15 +1,13 @@
 package edu.java.scrapper.api.service.updater.stackoverflow;
 
-import edu.java.request.LinkUpdateRequest;
-import edu.java.scrapper.api.repository.LinkRepository;
-import edu.java.scrapper.api.repository.SubscriptionRepository;
-import edu.java.scrapper.api.repository.dto.LinkDto;
 import edu.java.scrapper.api.service.exception.EntityNotFoundException;
 import edu.java.scrapper.api.service.exception.NotSupportedLinkException;
 import edu.java.scrapper.api.service.updater.AbstractUpdatesFetcher;
+import edu.java.scrapper.api.service.updater.LinkUpdateDescription;
 import edu.java.scrapper.client.dto.stackoverflow.QuestionAnswerResponse;
 import edu.java.scrapper.client.stackoverflow.StackoverflowClient;
 import java.net.URI;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -24,33 +22,38 @@ public class StackoverflowUpdatesFetcher extends AbstractUpdatesFetcher {
     private final StackoverflowClient stackoverflowClient;
 
     public StackoverflowUpdatesFetcher(
-        SubscriptionRepository subscriptionRepository,
-        LinkRepository linkRepository,
         StackoverflowClient stackoverflowClient
     ) {
-        super(subscriptionRepository, linkRepository);
         this.stackoverflowClient = stackoverflowClient;
     }
 
     @Override
-    public Optional<LinkUpdateRequest> fetchUpdatesFromLink(LinkDto linkDto)
+    public Optional<LinkUpdateDescription> fetchUpdatesFromLink(URI url, OffsetDateTime lastUpdatedAt)
         throws NotSupportedLinkException, EntityNotFoundException {
-        long questionId = fetchQuestionId(linkDto.url());
+        String textPath = getProceedUrl(url, SITE_BASE_URL);
+
+        String[] parts = textPath.split(URL_DELIMITER);
+        long questionId = fetchQuestionId(parts);
+        // Убираем необязательную часть из ссылки
+        if (parts.length > 2) {
+            textPath = parts[0] + URL_DELIMITER + parts[1];
+        }
 
         QuestionAnswerResponse questionAnswerResponse = stackoverflowClient.fetchLastModified(questionId);
         if (questionAnswerResponse == null) {
             throw new EntityNotFoundException("Ссылка %s указывает на несуществующий вопрос"
-                .formatted(linkDto.url()));
+                .formatted(url));
         }
-        return makeLinkUpdate(
-            linkDto,
+        return defineShouldMakeLinkUpdate(
+            textPath,
             questionAnswerResponse.lastModified(),
+            lastUpdatedAt,
             "В вопросе появились обновления"
         );
     }
 
-    private long fetchQuestionId(URI url) throws NotSupportedLinkException {
-        String[] parts = getUrlPathParts(url, SITE_BASE_URL);
+    private long fetchQuestionId(String[] parts) throws NotSupportedLinkException {
+
         if (parts.length < 2) {
             throw new NotSupportedLinkException(NOT_SUPPORTED_TEXT);
         }

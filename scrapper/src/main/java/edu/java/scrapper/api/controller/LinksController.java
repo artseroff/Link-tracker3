@@ -7,6 +7,7 @@ import edu.java.response.ListLinksResponse;
 import edu.java.scrapper.api.service.LinkService;
 import edu.java.scrapper.api.service.exception.EntityAlreadyExistException;
 import edu.java.scrapper.api.service.exception.EntityNotFoundException;
+import edu.java.scrapper.api.service.exception.NotSupportedLinkException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -58,7 +59,7 @@ public class LinksController {
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @PostMapping
     ResponseEntity<LinkResponse> add(@Valid @RequestBody LinkSubscriptionDto linkSubscriptionDto)
-        throws EntityAlreadyExistException, EntityNotFoundException {
+        throws EntityAlreadyExistException, EntityNotFoundException, NotSupportedLinkException {
 
         LinkResponse tracked = linkService.track(linkSubscriptionDto.chatId(), linkSubscriptionDto.url());
         return ResponseEntity.ok().body(tracked);

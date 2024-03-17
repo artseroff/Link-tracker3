@@ -54,18 +54,19 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
         int countUpdates = 0;
         for (LinkDto linkDto : allBeforeLastSchedulerCheck) {
 
-            Optional<LinkUpdateRequest> requestOptional;
+            Optional<LinkUpdateDescription> updateDescriptionOptional;
 
             try {
-                requestOptional = headUpdatesFetcher.chainedUpdatesFetching(linkDto);
+                updateDescriptionOptional =
+                    headUpdatesFetcher.chainedUpdatesFetching(linkDto.url(), linkDto.lastUpdatedAt());
             } catch (NotSupportedLinkException | EntityNotFoundException e) {
                 processInvalidLink(linkDto, e.getMessage());
                 continue;
             }
 
-            if (requestOptional.isPresent()) {
+            if (updateDescriptionOptional.isPresent()) {
                 countUpdates++;
-                botClient.updates(requestOptional.get());
+                processValidLink(linkDto.id(), updateDescriptionOptional.get());
             }
         }
         return countUpdates;
@@ -85,5 +86,19 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
         botClient.updates(notUpdateRequest);
         // Каскадное удаление
         linkRepository.remove(linkDto.id());
+    }
+
+    private void processValidLink(long linkId, LinkUpdateDescription linkUpdateDescription) {
+        OffsetDateTime fetchedUpdateDate = linkUpdateDescription.lastUpdatedAt();
+        OffsetDateTime checkedTime = linkUpdateDescription.lastSchedulerCheck();
+        linkRepository.updateModifiedAndSchedulerCheckDates(linkId, fetchedUpdateDate, checkedTime);
+
+        List<Long> chatIds = subscriptionRepository.findChatsByLinkId(linkId).stream()
+            .map(ChatDto::id)
+            .toList();
+
+        LinkUpdateRequest linkUpdateRequest =
+            new LinkUpdateRequest(linkId, linkUpdateDescription.url(), linkUpdateDescription.description(), chatIds);
+        botClient.updates(linkUpdateRequest);
     }
 }
