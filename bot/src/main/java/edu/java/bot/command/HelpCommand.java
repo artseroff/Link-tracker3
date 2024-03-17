@@ -7,11 +7,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 @Component
-@ComponentScan(basePackages = {"edu.java.bot.service.link", "edu.java.bot.command"})
 public class HelpCommand extends AbstractValidatedCommand {
     private static final String COMMAND_REPRESENTATION_FORMAT =
         ActionCommand.FIRST_COMMAND_SYMBOL + "%s -- %s;";

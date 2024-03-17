@@ -11,7 +11,7 @@ public class BotClientConfig {
     private String baseUrl;
 
     @Bean
-    public BotClient githubClient() {
+    public BotClient botClient() {
         return new BotClient(baseUrl);
     }
 }
