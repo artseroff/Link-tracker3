@@ -10,9 +10,13 @@ import edu.java.scrapper.api.repository.jdbc.JdbcTgChatRepository;
 import edu.java.scrapper.api.service.LinkService;
 import edu.java.scrapper.api.service.exception.EntityAlreadyExistException;
 import edu.java.scrapper.api.service.exception.EntityNotFoundException;
+import edu.java.scrapper.api.service.exception.NotSupportedLinkException;
+import edu.java.scrapper.api.service.updater.AbstractUpdatesFetcher;
+import edu.java.scrapper.api.service.updater.LinkUpdateDescription;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,27 +30,30 @@ public class JdbcLinkService implements LinkService {
     private final JdbcTgChatRepository chatRepository;
     private final JdbcLinkRepository linkRepository;
     private final JdbcSubscriptionRepository subscriptionRepository;
+    private final AbstractUpdatesFetcher headUpdatesFetcher;
 
     public JdbcLinkService(
         JdbcTgChatRepository chatRepository,
         JdbcLinkRepository linkRepository,
-        JdbcSubscriptionRepository subscriptionRepository
+        JdbcSubscriptionRepository subscriptionRepository,
+        @Qualifier("headUpdatesFetcher") AbstractUpdatesFetcher headUpdatesFetcher
     ) {
         this.chatRepository = chatRepository;
         this.linkRepository = linkRepository;
         this.subscriptionRepository = subscriptionRepository;
+        this.headUpdatesFetcher = headUpdatesFetcher;
     }
 
     @Override
-    public LinkResponse track(long chatId, URI url) throws EntityAlreadyExistException, EntityNotFoundException {
-        chatRepository.findById(chatId)
-            .orElseThrow(() -> new EntityNotFoundException(CHAT_NOT_FOUND.formatted(chatId)));
+    public LinkResponse track(long chatId, URI url)
+        throws EntityAlreadyExistException, EntityNotFoundException, NotSupportedLinkException {
+        checkIsChatRegisteredOrThrow(chatId);
 
         LinkDto linkDto = addLinkIfNotExist(url);
         SubscriptionDto subscriptionDto = new SubscriptionDto(chatId, linkDto.id());
         Optional<SubscriptionDto> foundSub = subscriptionRepository.findEntity(subscriptionDto);
         if (foundSub.isPresent()) {
-            throw new EntityAlreadyExistException(ALREADY_TRACKED_LINK.formatted(url));
+            throw new EntityAlreadyExistException(ALREADY_TRACKED_LINK.formatted(linkDto.url()));
         }
 
         subscriptionRepository.add(subscriptionDto);
@@ -58,10 +65,32 @@ public class JdbcLinkService implements LinkService {
             .orElseThrow(() -> new EntityNotFoundException(CHAT_NOT_FOUND.formatted(chatId)));
     }
 
-    private LinkDto addLinkIfNotExist(URI url) {
+    private LinkDto addLinkIfNotExist(URI url) throws NotSupportedLinkException, EntityNotFoundException {
         Optional<LinkDto> linkDto = linkRepository.findByUrl(url);
-        return linkDto.orElseGet(() ->
-            linkRepository.add(url, null, null));
+        if (linkDto.isPresent()) {
+            return linkDto.get();
+        }
+
+        Optional<LinkUpdateDescription> updateDescriptionOptional =
+            headUpdatesFetcher.chainedUpdatesFetching(url, null);
+
+        if (updateDescriptionOptional.isEmpty()) {
+            throw new RuntimeException("Не удалось выполнить запрос по ссылке %s".formatted(url));
+        }
+
+        LinkUpdateDescription updateDescription = updateDescriptionOptional.get();
+
+        // Повторная проверка по обработанному url
+        linkDto = linkRepository.findByUrl(updateDescription.url());
+        if (linkDto.isPresent()) {
+            return linkDto.get();
+        }
+
+        return linkRepository.add(
+            updateDescription.url(),
+            updateDescription.lastUpdatedAt(),
+            updateDescription.lastSchedulerCheck()
+        );
     }
 
     @Override

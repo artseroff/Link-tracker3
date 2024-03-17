@@ -1,29 +1,15 @@
 package edu.java.scrapper.api.service.updater;
 
-import edu.java.request.LinkUpdateRequest;
-import edu.java.scrapper.api.repository.LinkRepository;
-import edu.java.scrapper.api.repository.SubscriptionRepository;
-import edu.java.scrapper.api.repository.dto.ChatDto;
-import edu.java.scrapper.api.repository.dto.LinkDto;
 import edu.java.scrapper.api.service.exception.EntityNotFoundException;
 import edu.java.scrapper.api.service.exception.NotSupportedLinkException;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractUpdatesFetcher {
-    private static final String URL_DELIMITER = "/";
-    private final SubscriptionRepository subscriptionRepository;
-
-    private final LinkRepository linkRepository;
+    protected static final String URL_DELIMITER = "/";
     private AbstractUpdatesFetcher next;
-
-    protected AbstractUpdatesFetcher(SubscriptionRepository subscriptionRepository, LinkRepository linkRepository) {
-        this.subscriptionRepository = subscriptionRepository;
-        this.linkRepository = linkRepository;
-    }
 
     public void setNext(AbstractUpdatesFetcher next) {
         if (this.equals(next)) {
@@ -32,23 +18,35 @@ public abstract class AbstractUpdatesFetcher {
         this.next = next;
     }
 
-    public Optional<LinkUpdateRequest> chainedUpdatesFetching(LinkDto linkDto)
+    public Optional<LinkUpdateDescription> chainedUpdatesFetching(URI url, OffsetDateTime lastUpdatedAt)
         throws NotSupportedLinkException, EntityNotFoundException {
         try {
-            return fetchUpdatesFromLink(linkDto);
+            return fetchUpdatesFromLink(url, lastUpdatedAt);
         } catch (NotSupportedLinkException e) {
             if (next != null) {
-                return next.fetchUpdatesFromLink(linkDto);
+                return next.fetchUpdatesFromLink(url, lastUpdatedAt);
             } else {
                 throw e;
             }
         }
     }
 
-    public abstract Optional<LinkUpdateRequest> fetchUpdatesFromLink(LinkDto linkDto)
+    /**
+     * Извлекает обновления по ссылке
+     *
+     * @param url           адрес ресурса
+     * @param lastUpdatedAt дата последнего обновления
+     * @return Optional.empty(), в случае если не появились обновления.
+     *     В ином случае:
+     *     Optional обертку над LinkUpdateDescription с информацией об провалидированном url,
+     *     новой датой последнего обновления, временем проверки изменений и описанием изменений
+     * @throws NotSupportedLinkException Если ссылка не поддерживается объектом этого класса
+     * @throws EntityNotFoundException   Если ресурс по ссылке не найден
+     */
+    public abstract Optional<LinkUpdateDescription> fetchUpdatesFromLink(URI url, OffsetDateTime lastUpdatedAt)
         throws NotSupportedLinkException, EntityNotFoundException;
 
-    protected String[] getUrlPathParts(URI url, String siteBaseUrl) throws NotSupportedLinkException {
+    protected String getProceedUrl(URI url, String siteBaseUrl) throws NotSupportedLinkException {
         FetchersChainUtils.throwIfProtocolAbsent(url.toString());
         if (!siteBaseUrl.equals(url.getHost())) {
             throw new NotSupportedLinkException("Сервис %s не поддерживается".formatted(url.getHost()));
@@ -62,18 +60,17 @@ public abstract class AbstractUpdatesFetcher {
         if (path.endsWith(URL_DELIMITER)) {
             endIndex--;
         }
-        String substring = path.substring(startIndex, endIndex);
 
-        return substring.split(URL_DELIMITER);
+        return path.substring(startIndex, endIndex);
     }
 
-    protected Optional<LinkUpdateRequest> makeLinkUpdate(
-        LinkDto linkDto,
+    protected Optional<LinkUpdateDescription> defineShouldMakeLinkUpdate(
+        String urlPath,
         OffsetDateTime fetchedUpdateDate,
+        OffsetDateTime lastUpdatedAt,
         String description
     ) {
         OffsetDateTime checkedTime = OffsetDateTime.now(ZoneOffset.UTC);
-        OffsetDateTime lastUpdatedAt = linkDto.lastUpdatedAt();
 
         boolean dontNeedUpdate = lastUpdatedAt != null
             && (fetchedUpdateDate.isEqual(lastUpdatedAt) || fetchedUpdateDate.isBefore(lastUpdatedAt));
@@ -82,14 +79,9 @@ public abstract class AbstractUpdatesFetcher {
             return Optional.empty();
         }
 
-        linkRepository.updateModifiedAndSchedulerCheckDates(linkDto.id(), fetchedUpdateDate, checkedTime);
-
-        List<Long> chatIds = subscriptionRepository.findChatsByLinkId(linkDto.id()).stream()
-            .map(ChatDto::id)
-            .toList();
-
-        LinkUpdateRequest linkUpdateRequest =
-            new LinkUpdateRequest(linkDto.id(), linkDto.url(), description, chatIds);
-        return Optional.of(linkUpdateRequest);
+        URI fullUrl = URI.create(FetchersChainUtils.SECURE_HYPER_TEXT_PROTOCOL + urlPath);
+        LinkUpdateDescription linkUpdateDescription =
+            new LinkUpdateDescription(fullUrl, fetchedUpdateDate, checkedTime, description);
+        return Optional.of(linkUpdateDescription);
     }
 }
