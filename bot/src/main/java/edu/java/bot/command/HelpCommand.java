@@ -5,6 +5,7 @@ import edu.java.bot.command.raw.ParameterizableTextCommand;
 import edu.java.bot.service.link.AbstractLinkValidator;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,10 @@ public class HelpCommand extends AbstractValidatedCommand {
     private static final String CURRENT_AVAILABLE_LINKS_TEXT =
         "\nНа данный момент для отслеживания доступны только следующие сервисы:\n";
 
-    private Set<ActionCommand> commands;
     private final Set<AbstractLinkValidator> linkValidatorSet;
+
+    @Setter
+    private Set<ActionCommand> commands;
 
     @Autowired
     public HelpCommand(Set<AbstractLinkValidator> linkValidatorSet) {
@@ -47,10 +50,6 @@ public class HelpCommand extends AbstractValidatedCommand {
         if (rawParameter != null) {
             throw new IllegalArgumentException("Команда /help не имеет параметров");
         }
-    }
-
-    public void SetCommands(Set<ActionCommand> commands) {
-        this.commands = commands;
     }
 
     private String buildHelpText() {

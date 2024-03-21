@@ -132,8 +132,7 @@ public class SimpleLinkService implements LinkService {
         String fullPath = url.toString().trim();
         if (fullPath.endsWith(FetchersChainUtils.URL_DELIMITER)) {
             fullPath = fullPath.substring(0, fullPath.length() - 1);
-            return URI.create(fullPath);
         }
-        return url;
+        return URI.create(fullPath.toLowerCase());
     }
 }

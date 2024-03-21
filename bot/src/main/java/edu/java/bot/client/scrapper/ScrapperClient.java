@@ -6,7 +6,6 @@ import edu.java.general.LinkSubscriptionDto;
 import edu.java.response.LinkResponse;
 import edu.java.response.ListLinksResponse;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -23,14 +22,7 @@ public class ScrapperClient extends AbstractClient {
     }
 
     private Mono<ApiException> buildApiException(ClientResponse response) {
-        HttpStatus httpStatus = (HttpStatus) response.statusCode();
-
-        return response
-            .bodyToMono(String.class)
-            .flatMap(errorBody -> Mono.error(new ApiException(
-                httpStatus.getReasonPhrase(),
-                errorBody
-            )));
+        return response.bodyToMono(ApiException.class);
     }
 
     public void createChat(long id) {

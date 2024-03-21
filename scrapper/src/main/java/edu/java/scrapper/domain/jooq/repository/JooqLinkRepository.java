@@ -59,7 +59,7 @@ public class JooqLinkRepository implements LinkRepository {
     public void remove(long id) {
         dslContext
             .deleteFrom(Tables.LINKS)
-            .where(Tables.SUBSCRIPTIONS.LINK_ID.eq(id))
+            .where(Tables.LINKS.ID.eq(id))
             .execute();
     }
 

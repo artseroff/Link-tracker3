@@ -1,8 +1,8 @@
 package edu.java.bot.command;
 
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.client.scrapper.ScrapperClient;
 import edu.java.bot.command.raw.ParameterizableTextCommand;
-import edu.java.bot.service.UserService;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class StartCommand extends AbstractValidatedCommand {
 
-    private final UserService userService;
+    private final ScrapperClient scrapperClient;
 
     @Autowired
-    public StartCommand(UserService userService) {
-        this.userService = userService;
+    public StartCommand(ScrapperClient scrapperClient) {
+        this.scrapperClient = scrapperClient;
     }
 
     @Override
@@ -31,11 +31,8 @@ public class StartCommand extends AbstractValidatedCommand {
     public SendMessage execute(@NotNull ParameterizableTextCommand textCommand) {
         validate(textCommand);
         long chatId = textCommand.chatId();
-        String message = "Вы уже зарегистрированы";
-
-        if (userService.addUser(chatId)) {
-            message = "Вы успешно зарегистрировались";
-        }
+        scrapperClient.createChat(chatId);
+        String message = "Вы успешно зарегистрировались";
         return new SendMessage(chatId, message);
     }
 

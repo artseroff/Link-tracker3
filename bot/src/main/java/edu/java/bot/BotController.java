@@ -10,12 +10,16 @@ import com.pengrad.telegrambot.response.SendResponse;
 import edu.java.bot.command.ActionCommand;
 import edu.java.bot.command.factory.ActionFactory;
 import edu.java.bot.command.raw.ParameterizableTextCommand;
+import edu.java.bot.configuration.ApplicationConfig;
+import edu.java.bot.service.StatusCodeUtils;
+import edu.java.general.ApiException;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 @Component
 @Slf4j
@@ -26,23 +30,26 @@ public class BotController implements AutoCloseable {
 
     private final Set<ActionCommand> commands;
     private final ActionFactory actionFactory;
-    private final TelegramBot bot;
+    private final ApplicationConfig config;
+
+    private TelegramBot telegramBot;
 
     @Autowired
-    public BotController(TelegramBot bot, Set<ActionCommand> commands) {
-        this.bot = bot;
+    public BotController(ApplicationConfig config, Set<ActionCommand> commands) {
         this.commands = commands;
         this.actionFactory = new ActionFactory(commands);
+        this.config = config;
     }
 
     @Override
     public void close() {
-        bot.removeGetUpdatesListener();
-        bot.shutdown();
+        telegramBot.removeGetUpdatesListener();
+        telegramBot.shutdown();
     }
 
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
+        telegramBot = new TelegramBot(config.telegramToken());
         setUpdatesListener();
         setBotMenu();
     }
@@ -51,11 +58,11 @@ public class BotController implements AutoCloseable {
         BotCommand[] botCommands = commands.stream()
             .map(command -> new BotCommand(command.command(), command.description()))
             .toArray(BotCommand[]::new);
-        bot.execute(new SetMyCommands(botCommands));
+        telegramBot.execute(new SetMyCommands(botCommands));
     }
 
     private void setUpdatesListener() {
-        bot.setUpdatesListener(updates -> {
+        telegramBot.setUpdatesListener(updates -> {
             for (Update update : updates) {
 
                 SendMessage message = handleUpdate(update);
@@ -74,17 +81,20 @@ public class BotController implements AutoCloseable {
                 BOT_PROCESS_ONLY_PLAIN_TEXT
             );
         }
-        SendMessage message;
+        SendMessage sendMessage;
         try {
+
             ParameterizableTextCommand textCommand =
                 ParameterizableTextCommand.buildTextCommandFromUpdate(update);
             ActionCommand command = actionFactory.defineCommand(textCommand);
-            message = command.execute(textCommand);
-        } catch (RuntimeException e) {
+            sendMessage = command.execute(textCommand);
+
+        } catch (IllegalArgumentException | ApiException | WebClientRequestException e) {
             long chatId = update.message().chat().id();
-            message = new SendMessage(chatId, e.getMessage());
+            String errorText = prepareExceptionMessage(e);
+            sendMessage = new SendMessage(chatId, errorText);
         }
-        return message;
+        return sendMessage;
     }
 
     private long getChatId(Update update) {
@@ -104,10 +114,20 @@ public class BotController implements AutoCloseable {
         return chatId;
     }
 
+    private String prepareExceptionMessage(RuntimeException e) {
+        String errorText = e.getMessage();
+        if (e instanceof WebClientRequestException
+            || (e instanceof ApiException && StatusCodeUtils.is5xxServerError(((ApiException) e).getCode()))) {
+            errorText = "Сервис отслеживания ссылок недоступен";
+        }
+        return errorText;
+    }
+
     public void sendMessage(SendMessage message) {
-        SendResponse response = bot.execute(message);
+        SendResponse response = telegramBot.execute(message);
         if (!response.isOk()) {
             log.error("%s;%s".formatted(response.errorCode(), response.description()));
         }
     }
+
 }
