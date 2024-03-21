@@ -1,12 +1,12 @@
-package edu.java.scrapper;
-import edu.java.scrapper.configuration.DBConfig;
+package edu.java.scrapper.integration;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-@SpringJUnitConfig(DBConfig.class)
+@SpringBootTest
 public class LiquibaseIntegrationTest extends IntegrationTest {
 
     private final JdbcClient jdbcClient;
@@ -18,16 +18,24 @@ public class LiquibaseIntegrationTest extends IntegrationTest {
 
     @Test
     public void addChatTest() {
-        int id = 1;
-        int chatId = 12345;
-        jdbcClient.sql("INSERT INTO chats (chat_id) VALUES (?)")
-            .param(chatId)
+        // Assert
+        int expectedChatId = 12345;
+
+        // Act
+        jdbcClient.sql("INSERT INTO chats (id) VALUES (?)")
+            .param(expectedChatId)
             .update();
+
         Long actualChatId = jdbcClient
-            .sql("SELECT chat_id FROM chats WHERE id=?")
-            .param(id)
+            .sql("SELECT id FROM chats WHERE id=?")
+            .param(expectedChatId)
             .query(Long.class)
             .single();
-        Assertions.assertEquals(chatId, actualChatId);
+
+        // Arrange
+        Assertions.assertEquals(expectedChatId, actualChatId);
+        jdbcClient
+            .sql("truncate table chats restart identity cascade")
+            .update();
     }
 }

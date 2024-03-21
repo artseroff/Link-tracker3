@@ -1,7 +1,7 @@
 package edu.java.scrapper.client.stackoverflow;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
-import edu.java.scrapper.dto.stackoverflow.QuestionAnswerResponse;
+import edu.java.scrapper.client.dto.stackoverflow.QuestionAnswerResponse;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Map;
@@ -90,6 +90,7 @@ public class SimpleStackoverflowClientTest {
         QuestionAnswerResponse expectedResponse = new QuestionAnswerResponse(
             questionId,
             expectedAnswerId,
+            expectedLastActivityTime,
             expectedLastActivityTime,
             new QuestionAnswerResponse.Owner(expectedOwnerName)
         );

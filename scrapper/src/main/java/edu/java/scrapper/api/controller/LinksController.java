@@ -1,16 +1,20 @@
 package edu.java.scrapper.api.controller;
 
-import edu.java.general.LinkDto;
+import edu.java.general.LinkSubscriptionDto;
 import edu.java.response.ApiErrorResponse;
 import edu.java.response.LinkResponse;
 import edu.java.response.ListLinksResponse;
+import edu.java.scrapper.service.LinkService;
+import edu.java.scrapper.service.exception.CorruptedLinkException;
+import edu.java.scrapper.service.exception.EntityAlreadyExistException;
+import edu.java.scrapper.service.exception.EntityNotFoundException;
+import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/links")
 @Slf4j
 public class LinksController {
+    private final LinkService linkService;
+
+    public LinksController(LinkService linkService) {
+        this.linkService = linkService;
+    }
+
     @Operation(summary = "Добавить отслеживание ссылки")
     @ApiResponse(
         responseCode = "200",
@@ -49,9 +59,11 @@ public class LinksController {
         description = "Ошибка сервера",
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @PostMapping
-    ResponseEntity<LinkResponse> add(@Valid @RequestBody LinkDto linkDto) {
-        log.info("Добавление ссылки {}", linkDto);
-        return ResponseEntity.ok(new LinkResponse(linkDto.chatId(), linkDto.url()));
+    ResponseEntity<LinkResponse> add(@Valid @RequestBody LinkSubscriptionDto linkSubscriptionDto)
+        throws EntityAlreadyExistException, EntityNotFoundException, NotSupportedLinkException, CorruptedLinkException {
+
+        LinkResponse tracked = linkService.track(linkSubscriptionDto.chatId(), linkSubscriptionDto.url());
+        return ResponseEntity.ok().body(tracked);
     }
 
     @Operation(summary = "Убрать отслеживание ссылки")
@@ -76,10 +88,11 @@ public class LinksController {
         content = @Content(schema = @Schema(implementation = ApiErrorResponse.class)))
     @DeleteMapping
     ResponseEntity<LinkResponse> delete(
-        @Valid @RequestBody LinkDto linkDto
-    ) {
-        log.info("Удаление ссылки {}", linkDto);
-        return ResponseEntity.ok(new LinkResponse(linkDto.chatId(), linkDto.url()));
+        @Valid @RequestBody LinkSubscriptionDto linkSubscriptionDto
+    ) throws EntityNotFoundException {
+
+        LinkResponse untracked = linkService.untrack(linkSubscriptionDto.chatId(), linkSubscriptionDto.url());
+        return ResponseEntity.ok().body(untracked);
     }
 
     @Operation(summary = "Получить все отслеживаемые ссылки")
@@ -100,12 +113,9 @@ public class LinksController {
     @GetMapping("/{id}")
     ResponseEntity<ListLinksResponse> getLinks(
         @PathVariable("id") Long tgChatId
-    ) {
-        try {
-            log.info("Получение всех отслеживаемых ссылок у чата {}", tgChatId);
-            return ResponseEntity.ok(new ListLinksResponse(List.of(new LinkResponse(1L, new URI("ya.ru")))));
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+    ) throws EntityNotFoundException {
+
+        Collection<LinkResponse> linkResponses = linkService.listAll(tgChatId);
+        return ResponseEntity.ok(new ListLinksResponse((List<LinkResponse>) linkResponses));
     }
 }

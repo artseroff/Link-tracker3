@@ -50,6 +50,7 @@
         <module>bot</module>
         <module>scrapper</module>
         <module>model</module>
+        <module>scrapper-jooq</module>
     </modules>
 
     <dependencyManagement>
