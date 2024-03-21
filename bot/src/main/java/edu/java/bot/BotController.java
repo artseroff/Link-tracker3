@@ -10,7 +10,6 @@ import com.pengrad.telegrambot.response.SendResponse;
 import edu.java.bot.command.ActionCommand;
 import edu.java.bot.command.factory.ActionFactory;
 import edu.java.bot.command.raw.ParameterizableTextCommand;
-import edu.java.bot.configuration.ApplicationConfig;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,27 +23,26 @@ public class BotController implements AutoCloseable {
     private static final String BOT_PROCESS_ONLY_PLAIN_TEXT = "Введите новое сообщение. "
         + "Бот не умеет считывать изменения прошлых собщений и может "
         + "принимать только сообщения из обычного текста без стикеров и ссылок на другие чаты.";
-    private final ApplicationConfig config;
+
     private final Set<ActionCommand> commands;
     private final ActionFactory actionFactory;
-    private TelegramBot bot;
+    private final TelegramBot bot;
 
     @Autowired
-    public BotController(ApplicationConfig config, Set<ActionCommand> commands) {
-        this.config = config;
+    public BotController(TelegramBot bot, Set<ActionCommand> commands) {
+        this.bot = bot;
         this.commands = commands;
         this.actionFactory = new ActionFactory(commands);
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         bot.removeGetUpdatesListener();
         bot.shutdown();
     }
 
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
-        bot = new TelegramBot(config.telegramToken());
         setUpdatesListener();
         setBotMenu();
     }
@@ -82,7 +80,7 @@ public class BotController implements AutoCloseable {
                 ParameterizableTextCommand.buildTextCommandFromUpdate(update);
             ActionCommand command = actionFactory.defineCommand(textCommand);
             message = command.execute(textCommand);
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             long chatId = update.message().chat().id();
             message = new SendMessage(chatId, e.getMessage());
         }
@@ -106,7 +104,7 @@ public class BotController implements AutoCloseable {
         return chatId;
     }
 
-    private void sendMessage(SendMessage message) {
+    public void sendMessage(SendMessage message) {
         SendResponse response = bot.execute(message);
         if (!response.isOk()) {
             log.error("%s;%s".formatted(response.errorCode(), response.description()));

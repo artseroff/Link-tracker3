@@ -17,12 +17,11 @@ public class HelpCommand extends AbstractValidatedCommand {
     private static final String CURRENT_AVAILABLE_LINKS_TEXT =
         "\nНа данный момент для отслеживания доступны только следующие сервисы:\n";
 
-    private final Set<ActionCommand> commands;
+    private Set<ActionCommand> commands;
     private final Set<AbstractLinkValidator> linkValidatorSet;
 
     @Autowired
-    public HelpCommand(Set<ActionCommand> commands, Set<AbstractLinkValidator> linkValidatorSet) {
-        this.commands = commands;
+    public HelpCommand(Set<AbstractLinkValidator> linkValidatorSet) {
         this.linkValidatorSet = linkValidatorSet;
     }
 
@@ -48,6 +47,10 @@ public class HelpCommand extends AbstractValidatedCommand {
         if (rawParameter != null) {
             throw new IllegalArgumentException("Команда /help не имеет параметров");
         }
+    }
+
+    public void SetCommands(Set<ActionCommand> commands) {
+        this.commands = commands;
     }
 
     private String buildHelpText() {
