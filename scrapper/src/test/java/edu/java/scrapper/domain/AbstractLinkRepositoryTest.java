@@ -1,7 +1,6 @@
 package edu.java.scrapper.domain;
 
 import edu.java.scrapper.domain.dto.LinkDto;
-import edu.java.scrapper.domain.jdbc.JdbcLinkRepository;
 import edu.java.scrapper.integration.IntegrationTest;
 import java.net.URI;
 import java.time.OffsetDateTime;
@@ -20,7 +19,7 @@ public abstract class AbstractLinkRepositoryTest extends IntegrationTest {
 
     private final LinkRepository linkRepository;
 
-    public AbstractLinkRepositoryTest(JdbcLinkRepository linkRepository) {
+    public AbstractLinkRepositoryTest(LinkRepository linkRepository) {
         this.linkRepository = linkRepository;
     }
 
