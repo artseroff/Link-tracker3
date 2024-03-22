@@ -76,6 +76,7 @@ public class JooqLinkRepository implements LinkRepository {
             .selectFrom(Tables.LINKS)
             .where(Tables.LINKS.LAST_SCHEDULER_CHECK.isNull()
                 .or(Tables.LINKS.LAST_SCHEDULER_CHECK.le(lastSchedulerCheck)))
+            .orderBy(Tables.LINKS.LAST_SCHEDULER_CHECK.nullsFirst())
             .limit(linksLimit)
             .fetchInto(LinkDto.class);
     }

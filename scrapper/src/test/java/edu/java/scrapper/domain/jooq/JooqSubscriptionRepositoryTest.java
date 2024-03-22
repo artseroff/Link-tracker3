@@ -1,7 +1,7 @@
 package edu.java.scrapper.domain.jooq;
 
 import edu.java.scrapper.domain.AbstractSubscriptionRepositoryTest;
-import edu.java.scrapper.domain.jdbc.JdbcLinkRepository;
+import edu.java.scrapper.domain.jooq.repository.JooqLinkRepository;
 import edu.java.scrapper.domain.jooq.repository.JooqSubscriptionRepository;
 import edu.java.scrapper.domain.jooq.repository.JooqTgChatRepository;
 import org.jooq.DSLContext;
@@ -16,7 +16,7 @@ public class JooqSubscriptionRepositoryTest extends AbstractSubscriptionReposito
     @Autowired
     public JooqSubscriptionRepositoryTest(
         JooqSubscriptionRepository subscriptionRepository,
-        JdbcLinkRepository linkRepository,
+        JooqLinkRepository linkRepository,
         JooqTgChatRepository chatRepository,
         DSLContext dslContext
     ) {
