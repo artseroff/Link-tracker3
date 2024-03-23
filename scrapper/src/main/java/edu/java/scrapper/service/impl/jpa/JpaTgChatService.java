@@ -1,20 +1,23 @@
-package edu.java.scrapper.service.impl;
+package edu.java.scrapper.service.impl.jpa;
 
-import edu.java.scrapper.domain.TgChatRepository;
+import edu.java.scrapper.domain.jpa.JpaTgChatRepository;
+import edu.java.scrapper.domain.jpa.entity.ChatEntity;
 import edu.java.scrapper.service.LinkService;
 import edu.java.scrapper.service.TgChatService;
 import edu.java.scrapper.service.exception.EntityAlreadyExistException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
+import java.net.URI;
+import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
-public class SimpleTgChatService implements TgChatService {
-    private final TgChatRepository chatRepository;
+public class JpaTgChatService implements TgChatService {
+    private final JpaTgChatRepository chatRepository;
 
     private final LinkService linkService;
 
-    public SimpleTgChatService(
-        TgChatRepository chatRepository,
+    public JpaTgChatService(
+        JpaTgChatRepository chatRepository,
         LinkService linkService
     ) {
         this.chatRepository = chatRepository;
@@ -26,24 +29,27 @@ public class SimpleTgChatService implements TgChatService {
         if (chatRepository.findById(chatId).isPresent()) {
             throw new EntityAlreadyExistException("Чат уже зарегистрирован");
         }
-        chatRepository.add(chatId);
+        ChatEntity chatEntity = new ChatEntity();
+        chatEntity.setId(chatId);
+        chatRepository.save(chatEntity);
     }
 
     @Override
     public void unregister(long chatId) throws EntityNotFoundException {
-        chatRepository.findById(chatId)
-            .orElseThrow(() -> new EntityNotFoundException("Чат не найден"));
+        Optional<ChatEntity> optionalChat = chatRepository.findById(chatId);
 
-        linkService.listAll(chatId)
-            .forEach(linkDto -> {
+        optionalChat.orElseThrow(() -> new EntityNotFoundException("Чат не найден"));
+
+        optionalChat.get().getLinks()
+            .forEach(linkEntity -> {
                 try {
-                    linkService.untrack(chatId, linkDto.url());
+                    linkService.untrack(chatId, URI.create(linkEntity.getUrl()));
                 } catch (EntityNotFoundException e) {
                     throw new RuntimeException(e);
                 }
             });
 
-        chatRepository.remove(chatId);
+        chatRepository.deleteById(chatId);
     }
 
 }

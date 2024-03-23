@@ -8,10 +8,8 @@ import java.util.Collection;
 import java.util.Optional;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
 @Transactional
 public class JdbcLinkRepository implements LinkRepository {
     private final JdbcClient jdbcClient;
@@ -67,9 +65,9 @@ public class JdbcLinkRepository implements LinkRepository {
         String sql = """
             SELECT *
                 FROM links
-                WHERE last_scheduler_check IS NULL OR last_scheduler_check <= ?
+                WHERE last_scheduler_check IS NULL OR last_scheduler_check <= :lastSchedulerCheck
                 ORDER BY last_scheduler_check NULLS FIRST
-                LIMIT ?
+                LIMIT :linksLimit
             """;
         return jdbcClient.sql(sql)
             .param(lastSchedulerCheck)

@@ -7,9 +7,9 @@ import edu.java.scrapper.domain.dto.SubscriptionDto;
 import java.util.Collection;
 import java.util.Optional;
 import org.springframework.jdbc.core.simple.JdbcClient;
-import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+@Transactional
 public class JdbcSubscriptionRepository implements SubscriptionRepository {
 
     private final JdbcClient jdbcClient;

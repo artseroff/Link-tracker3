@@ -12,12 +12,13 @@ public class JdbcSubscriptionRepositoryTest extends AbstractSubscriptionReposito
 
     @Autowired
     public JdbcSubscriptionRepositoryTest(
-        JdbcSubscriptionRepository subscriptionRepository,
-        JdbcLinkRepository linkRepository,
-        JdbcTgChatRepository chatRepository,
         JdbcClient jdbcClient
     ) {
-        super(subscriptionRepository, linkRepository, chatRepository);
+        super(
+            new JdbcSubscriptionRepository(jdbcClient),
+            new JdbcLinkRepository(jdbcClient),
+            new JdbcTgChatRepository(jdbcClient)
+        );
         this.jdbcClient = jdbcClient;
     }
 

@@ -14,8 +14,8 @@ public class JooqLinkRepositoryTest extends AbstractLinkRepositoryTest {
     private final DSLContext dslContext;
 
     @Autowired
-    public JooqLinkRepositoryTest(JooqLinkRepository linkRepository, DSLContext dslContext) {
-        super(linkRepository);
+    public JooqLinkRepositoryTest(DSLContext dslContext) {
+        super(new JooqLinkRepository(dslContext));
         this.dslContext = dslContext;
     }
 

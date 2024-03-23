@@ -13,8 +13,8 @@ public class JdbcLinkRepositoryTest extends AbstractLinkRepositoryTest {
     private final JdbcClient jdbcClient;
 
     @Autowired
-    public JdbcLinkRepositoryTest(JdbcLinkRepository linkRepository, JdbcClient jdbcClient) {
-        super(linkRepository);
+    public JdbcLinkRepositoryTest(JdbcClient jdbcClient) {
+        super(new JdbcLinkRepository(jdbcClient));
         this.jdbcClient = jdbcClient;
     }
 

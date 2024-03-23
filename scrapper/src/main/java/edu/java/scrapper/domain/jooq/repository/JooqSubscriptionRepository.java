@@ -8,9 +8,9 @@ import edu.java.scrapper.domain.jooq.Tables;
 import java.util.Collection;
 import java.util.Optional;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+@Transactional
 public class JooqSubscriptionRepository implements SubscriptionRepository {
 
     private final DSLContext dslContext;

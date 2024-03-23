@@ -13,8 +13,8 @@ public class JdbcTgChatRepositoryTest extends AbstractTgChatRepositoryTest {
     private final JdbcClient jdbcClient;
 
     @Autowired
-    public JdbcTgChatRepositoryTest(JdbcTgChatRepository chatRepository, JdbcClient jdbcClient) {
-        super(chatRepository);
+    public JdbcTgChatRepositoryTest(JdbcClient jdbcClient) {
+        super(new JdbcTgChatRepository(jdbcClient));
         this.jdbcClient = jdbcClient;
     }
 

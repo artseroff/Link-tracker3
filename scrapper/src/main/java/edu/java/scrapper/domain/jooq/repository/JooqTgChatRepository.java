@@ -7,9 +7,9 @@ import edu.java.scrapper.domain.jooq.tables.Chats;
 import java.util.Collection;
 import java.util.Optional;
 import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
+@Transactional
 public class JooqTgChatRepository implements TgChatRepository {
     private final DSLContext dslContext;
 

@@ -14,8 +14,8 @@ public class JooqTgChatRepositoryTest extends AbstractTgChatRepositoryTest {
     private final DSLContext dslContext;
 
     @Autowired
-    public JooqTgChatRepositoryTest(JooqTgChatRepository chatRepository, DSLContext dslContext) {
-        super(chatRepository);
+    public JooqTgChatRepositoryTest(DSLContext dslContext) {
+        super(new JooqTgChatRepository(dslContext));
         this.dslContext = dslContext;
     }
 

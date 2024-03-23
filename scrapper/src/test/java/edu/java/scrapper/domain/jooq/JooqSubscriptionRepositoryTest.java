@@ -15,12 +15,13 @@ public class JooqSubscriptionRepositoryTest extends AbstractSubscriptionReposito
 
     @Autowired
     public JooqSubscriptionRepositoryTest(
-        JooqSubscriptionRepository subscriptionRepository,
-        JooqLinkRepository linkRepository,
-        JooqTgChatRepository chatRepository,
         DSLContext dslContext
     ) {
-        super(subscriptionRepository, linkRepository, chatRepository);
+        super(
+            new JooqSubscriptionRepository(dslContext),
+            new JooqLinkRepository(dslContext),
+            new JooqTgChatRepository(dslContext)
+        );
         this.dslContext = dslContext;
     }
 
