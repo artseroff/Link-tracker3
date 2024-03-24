@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public class JooqTgChatRepositoryTest extends AbstractTgChatRepositoryTest {
+public class JooqTgChatRepositoryTest extends AbstractTgChatRepositoryTest implements JooqTest {
 
     private final DSLContext dslContext;
 
@@ -25,10 +25,5 @@ public class JooqTgChatRepositoryTest extends AbstractTgChatRepositoryTest {
     @Override
     public void truncateTableChats() {
         dslContext.truncate(Tables.CHATS).restartIdentity().cascade().execute();
-    }
-
-    @DynamicPropertySource
-    static void setAccessType(DynamicPropertyRegistry registry) {
-        registry.add("app.database-access-type", () -> AccessType.JOOQ);
     }
 }
