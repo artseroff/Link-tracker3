@@ -48,7 +48,7 @@ public class LinkEntity {
     @Column(name = "last_scheduler_check")
     private OffsetDateTime lastSchedulerCheck;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "subscriptions",
                joinColumns = @JoinColumn(name = "link_id"),
                inverseJoinColumns = @JoinColumn(name = "chat_id"))

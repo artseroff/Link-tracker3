@@ -25,7 +25,7 @@ public class ChatEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToMany(mappedBy = "chats", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "chats", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<LinkEntity> links =
         new LinkedHashSet<>();
 
