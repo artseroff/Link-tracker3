@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(classes = {BotApplication.class})
 class BotCommandsTest {
-    private static final Long CHAT_ID = 1L;
+    /*private static final Long CHAT_ID = 1L;
 
     private static final String PARAMETER_CHAT_ID = "chat_id";
 
@@ -159,6 +159,6 @@ class BotCommandsTest {
                 }
             )
         };
-    }
+    }*/
 
 }

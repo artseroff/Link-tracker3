@@ -65,9 +65,9 @@ public class JdbcLinkRepository implements LinkRepository {
         String sql = """
             SELECT *
                 FROM links
-                WHERE last_scheduler_check IS NULL OR last_scheduler_check <= :lastSchedulerCheck
+                WHERE last_scheduler_check IS NULL OR last_scheduler_check <= ?
                 ORDER BY last_scheduler_check NULLS FIRST
-                LIMIT :linksLimit
+                LIMIT ?
             """;
         return jdbcClient.sql(sql)
             .param(lastSchedulerCheck)

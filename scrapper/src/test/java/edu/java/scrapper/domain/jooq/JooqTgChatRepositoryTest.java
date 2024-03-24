@@ -1,10 +1,13 @@
 package edu.java.scrapper.domain.jooq;
 
+import edu.java.scrapper.configuration.db.AccessType;
 import edu.java.scrapper.domain.AbstractTgChatRepositoryTest;
 import edu.java.scrapper.domain.jooq.repository.JooqTgChatRepository;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -22,5 +25,10 @@ public class JooqTgChatRepositoryTest extends AbstractTgChatRepositoryTest {
     @Override
     public void truncateTableChats() {
         dslContext.truncate(Tables.CHATS).restartIdentity().cascade().execute();
+    }
+
+    @DynamicPropertySource
+    static void setAccessType(DynamicPropertyRegistry registry) {
+        registry.add("app.database-access-type", () -> AccessType.JOOQ);
     }
 }

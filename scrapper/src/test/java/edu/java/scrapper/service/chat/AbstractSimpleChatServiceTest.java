@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public abstract class AbstractSimpleChatServiceTest extends IntegrationTest {
-    
+
     private final TgChatService tgChatService;
     private final TgChatRepository chatRepository;
 
