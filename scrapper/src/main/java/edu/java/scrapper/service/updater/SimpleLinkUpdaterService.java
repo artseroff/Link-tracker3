@@ -16,11 +16,8 @@ import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 public class SimpleLinkUpdaterService implements LinkUpdaterService {
     private final LinkRepository linkRepository;
     private final SubscriptionRepository subscriptionRepository;
@@ -33,7 +30,7 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
         SubscriptionRepository subscriptionRepository,
         ApplicationConfig config,
         BotClient botClient,
-        @Qualifier("headUpdatesFetcher") AbstractUpdatesFetcher headUpdatesFetcher
+        AbstractUpdatesFetcher headUpdatesFetcher
     ) {
         this.linkRepository = linkRepository;
         this.subscriptionRepository = subscriptionRepository;

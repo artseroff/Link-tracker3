@@ -16,10 +16,9 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Service
-//@Transactional
+@Transactional
 public class JpaLinkService implements LinkService {
     private final JpaLinkRepository linkRepository;
     private final AbstractUpdatesFetcher headUpdatesFetcher;
@@ -53,7 +52,7 @@ public class JpaLinkService implements LinkService {
         linkEntity.getChats().add(chatEntity);
         linkRepository.save(linkEntity);
 
-        return new LinkResponse(linkEntity.getId(), URI.create(linkEntity.getUrl()));
+        return new LinkResponse(linkEntity.getId(), linkEntity.getUrl());
     }
 
     private ChatEntity checkIsChatRegisteredOrThrow(long chatId) throws EntityNotFoundException {
@@ -64,7 +63,7 @@ public class JpaLinkService implements LinkService {
     private LinkEntity addLinkIfNotExist(URI url)
         throws NotSupportedLinkException, EntityNotFoundException, CorruptedLinkException {
         URI proceedUrl = LinkService.deleteTrailingSlash(url);
-        Optional<LinkEntity> linkEntity = linkRepository.findByUrl(proceedUrl.toString());
+        Optional<LinkEntity> linkEntity = linkRepository.findByUrl(proceedUrl);
         if (linkEntity.isPresent()) {
             return linkEntity.get();
         }
@@ -79,13 +78,13 @@ public class JpaLinkService implements LinkService {
         LinkUpdateDescription updateDescription = updateDescriptionOptional.get();
 
         // Повторная проверка по обработанному url
-        linkEntity = linkRepository.findByUrl(updateDescription.url().toString());
+        linkEntity = linkRepository.findByUrl(updateDescription.url());
         if (linkEntity.isPresent()) {
             return linkEntity.get();
         }
 
         LinkEntity linkForSave = new LinkEntity();
-        linkForSave.setUrl(updateDescription.url().toString());
+        linkForSave.setUrl(updateDescription.url());
         linkForSave.setLastUpdatedAt(updateDescription.lastUpdatedAt());
         linkForSave.setLastSchedulerCheck(updateDescription.lastSchedulerCheck());
         return linkRepository.save(linkForSave);
@@ -96,7 +95,7 @@ public class JpaLinkService implements LinkService {
         ChatEntity chatEntity = checkIsChatRegisteredOrThrow(chatId);
 
         URI proceedUrl = LinkService.deleteTrailingSlash(url);
-        LinkEntity linkEntity = linkRepository.findByUrl(proceedUrl.toString())
+        LinkEntity linkEntity = linkRepository.findByUrl(proceedUrl)
             .orElseThrow(() -> new EntityNotFoundException(NOT_TRACKED_LINK.formatted(url)));
 
         Set<ChatEntity> chats = linkEntity.getChats();
@@ -116,14 +115,14 @@ public class JpaLinkService implements LinkService {
             linkRepository.save(linkEntity);
         }
 
-        return new LinkResponse(linkEntity.getId(), URI.create(linkEntity.getUrl()));
+        return new LinkResponse(linkEntity.getId(), linkEntity.getUrl());
     }
 
     @Override
     public Collection<LinkResponse> listAll(long chatId) throws EntityNotFoundException {
-        ChatEntity chatEntity = checkIsChatRegisteredOrThrow(chatId);
-        return chatEntity.getLinks().stream()
-            .map(linkEntity -> new LinkResponse(linkEntity.getId(), URI.create(linkEntity.getUrl())))
+        checkIsChatRegisteredOrThrow(chatId);
+        return linkRepository.findAllByChat(chatId).stream()
+            .map(linkEntity -> new LinkResponse(linkEntity.getId(), linkEntity.getUrl()))
             .toList();
     }
 }

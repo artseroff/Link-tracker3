@@ -6,7 +6,6 @@ import edu.java.scrapper.service.LinkService;
 import edu.java.scrapper.service.TgChatService;
 import edu.java.scrapper.service.exception.EntityAlreadyExistException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
-import java.net.URI;
 import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +42,7 @@ public class JpaTgChatService implements TgChatService {
         optionalChat.get().getLinks()
             .forEach(linkEntity -> {
                 try {
-                    linkService.untrack(chatId, URI.create(linkEntity.getUrl()));
+                    linkService.untrack(chatId, linkEntity.getUrl());
                 } catch (EntityNotFoundException e) {
                     throw new RuntimeException(e);
                 }

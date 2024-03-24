@@ -12,18 +12,14 @@ import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
 import edu.java.scrapper.service.updater.LinkUpdateDescription;
 import edu.java.scrapper.service.updater.LinkUpdaterService;
-import java.net.URI;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 public class JpaLinkUpdaterService implements LinkUpdaterService {
     private final JpaLinkRepository linkRepository;
     private final ApplicationConfig config;
@@ -34,7 +30,7 @@ public class JpaLinkUpdaterService implements LinkUpdaterService {
         JpaLinkRepository linkRepository,
         ApplicationConfig config,
         BotClient botClient,
-        @Qualifier("headUpdatesFetcher") AbstractUpdatesFetcher headUpdatesFetcher
+        AbstractUpdatesFetcher headUpdatesFetcher
     ) {
         this.linkRepository = linkRepository;
         this.config = config;
@@ -60,7 +56,7 @@ public class JpaLinkUpdaterService implements LinkUpdaterService {
             try {
                 updateDescriptionOptional =
                     headUpdatesFetcher.chainedUpdatesFetching(
-                        URI.create(linkEntity.getUrl()),
+                        linkEntity.getUrl(),
                         linkEntity.getLastUpdatedAt()
                     );
 
@@ -84,7 +80,7 @@ public class JpaLinkUpdaterService implements LinkUpdaterService {
         LinkUpdateRequest notUpdateRequest =
             new LinkUpdateRequest(
                 linkEntity.getId(),
-                URI.create(linkEntity.getUrl()),
+                linkEntity.getUrl(),
                 "Ссылка %s будет удалена из отслеживаемых. Причина:\n%s".formatted(linkEntity.getUrl(), errorMessage),
                 chatIds
             );

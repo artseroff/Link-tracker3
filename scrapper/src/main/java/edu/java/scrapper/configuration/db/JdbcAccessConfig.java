@@ -1,5 +1,7 @@
 package edu.java.scrapper.configuration.db;
 
+import edu.java.scrapper.client.bot.BotClient;
+import edu.java.scrapper.configuration.ApplicationConfig;
 import edu.java.scrapper.domain.LinkRepository;
 import edu.java.scrapper.domain.SubscriptionRepository;
 import edu.java.scrapper.domain.TgChatRepository;
@@ -11,6 +13,8 @@ import edu.java.scrapper.service.TgChatService;
 import edu.java.scrapper.service.impl.SimpleLinkService;
 import edu.java.scrapper.service.impl.SimpleTgChatService;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
+import edu.java.scrapper.service.updater.LinkUpdaterService;
+import edu.java.scrapper.service.updater.SimpleLinkUpdaterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,9 +28,15 @@ public class JdbcAccessConfig {
 
     private final JdbcClient jdbcClient;
 
+    private final AbstractUpdatesFetcher headUpdatesFetcher;
+
     @Autowired
-    public JdbcAccessConfig(JdbcClient jdbcClient) {
+    public JdbcAccessConfig(
+        JdbcClient jdbcClient,
+        @Qualifier("headUpdatesFetcher") AbstractUpdatesFetcher headUpdatesFetcher
+    ) {
         this.jdbcClient = jdbcClient;
+        this.headUpdatesFetcher = headUpdatesFetcher;
     }
 
     @Bean
@@ -45,16 +55,27 @@ public class JdbcAccessConfig {
     }
 
     @Bean
-    public TgChatService tgChatService(@Qualifier("headUpdatesFetcher") AbstractUpdatesFetcher headUpdatesFetcher) {
-        return new SimpleTgChatService(tgChatRepository(), linkService(headUpdatesFetcher));
+    public TgChatService tgChatService() {
+        return new SimpleTgChatService(tgChatRepository(), linkService());
     }
 
     @Bean
-    public LinkService linkService(AbstractUpdatesFetcher headUpdatesFetcher) {
+    public LinkService linkService() {
         return new SimpleLinkService(
             tgChatRepository(),
             linkRepository(),
             subscriptionRepository(),
+            headUpdatesFetcher
+        );
+    }
+
+    @Bean
+    public LinkUpdaterService linkUpdaterService(ApplicationConfig config, BotClient botClient) {
+        return new SimpleLinkUpdaterService(
+            linkRepository(),
+            subscriptionRepository(),
+            config,
+            botClient,
             headUpdatesFetcher
         );
     }

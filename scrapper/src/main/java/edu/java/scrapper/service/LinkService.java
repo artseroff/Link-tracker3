@@ -23,9 +23,11 @@ public interface LinkService {
 
     static URI deleteTrailingSlash(URI url) {
         String fullPath = url.toString().trim();
-        if (fullPath.endsWith(FetchersChainUtils.URL_DELIMITER)) {
-            fullPath = fullPath.substring(0, fullPath.length() - 1);
+        if (!fullPath.endsWith(FetchersChainUtils.URL_DELIMITER)) {
+            return URI.create(fullPath);
         }
-        return URI.create(fullPath.toLowerCase());
+        fullPath = fullPath.substring(0, fullPath.length() - 1);
+        return URI.create(fullPath);
+
     }
 }
