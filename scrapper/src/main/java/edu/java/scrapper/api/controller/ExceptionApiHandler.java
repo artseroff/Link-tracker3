@@ -33,7 +33,7 @@ public class ExceptionApiHandler {
             .map(fieldError -> "field:%s; error:%s".formatted(fieldError.getField(), fieldError.getDefaultMessage()))
             .collect(Collectors.joining(" "));
         return new ApiErrorResponse(
-            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            HttpStatus.BAD_REQUEST.value(),
             exception.getClass().getSimpleName(),
             message
         );
@@ -45,7 +45,7 @@ public class ExceptionApiHandler {
             EXCEPTION_HTTP_STATUS_MAP.getOrDefault(exception.getClass(), HttpStatus.INTERNAL_SERVER_ERROR);
 
         ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
-            status.getReasonPhrase(),
+            status.value(),
             exception.getClass().getSimpleName(),
             exception.getMessage()
         );

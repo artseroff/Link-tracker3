@@ -57,7 +57,7 @@ public class JpaLinkService implements LinkService {
 
     private ChatEntity checkIsChatRegisteredOrThrow(long chatId) throws EntityNotFoundException {
         return jpaTgChatRepository.findById(chatId)
-            .orElseThrow(() -> new EntityNotFoundException(CHAT_NOT_FOUND.formatted(chatId)));
+            .orElseThrow(() -> new EntityNotFoundException(NEED_REGISTRATION));
     }
 
     private LinkEntity addLinkIfNotExist(URI url)

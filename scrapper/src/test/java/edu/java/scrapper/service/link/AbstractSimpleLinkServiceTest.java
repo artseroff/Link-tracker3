@@ -14,14 +14,6 @@ import edu.java.scrapper.service.exception.EntityNotFoundException;
 import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
 import edu.java.scrapper.service.updater.LinkUpdateDescription;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -29,7 +21,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
 import static org.mockito.Mockito.when;
 
 @Transactional
@@ -224,8 +222,8 @@ public abstract class AbstractSimpleLinkServiceTest extends IntegrationTest {
         long chatId = 1L;
 
         // Act && Assert
-        Assertions.assertThrows(EntityNotFoundException.class, ()->linkService.track(chatId, GITHUB_LINK));
-        Assertions.assertThrows(EntityNotFoundException.class, ()->linkService.untrack(chatId, GITHUB_LINK));
-        Assertions.assertThrows(EntityNotFoundException.class, ()->linkService.listAll(chatId));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> linkService.track(chatId, GITHUB_LINK));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> linkService.untrack(chatId, GITHUB_LINK));
+        Assertions.assertThrows(EntityNotFoundException.class, () -> linkService.listAll(chatId));
     }
 }

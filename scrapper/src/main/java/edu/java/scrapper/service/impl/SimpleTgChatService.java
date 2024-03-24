@@ -24,7 +24,7 @@ public class SimpleTgChatService implements TgChatService {
     @Override
     public void register(long chatId) throws EntityAlreadyExistException {
         if (chatRepository.findById(chatId).isPresent()) {
-            throw new EntityAlreadyExistException("Чат уже зарегистрирован");
+            throw new EntityAlreadyExistException(ALREADY_REGISTERED);
         }
         chatRepository.add(chatId);
     }
@@ -32,7 +32,7 @@ public class SimpleTgChatService implements TgChatService {
     @Override
     public void unregister(long chatId) throws EntityNotFoundException {
         chatRepository.findById(chatId)
-            .orElseThrow(() -> new EntityNotFoundException("Чат не найден"));
+            .orElseThrow(() -> new EntityNotFoundException(CHAT_NOT_FOUND.formatted(chatId)));
 
         linkService.listAll(chatId)
             .forEach(linkDto -> {

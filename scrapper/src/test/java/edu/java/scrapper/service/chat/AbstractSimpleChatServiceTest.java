@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Transactional
 public abstract class AbstractSimpleChatServiceTest extends IntegrationTest {
 

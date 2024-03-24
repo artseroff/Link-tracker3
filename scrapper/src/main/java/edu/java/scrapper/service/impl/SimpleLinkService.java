@@ -56,7 +56,7 @@ public class SimpleLinkService implements LinkService {
 
     private void checkIsChatRegisteredOrThrow(long chatId) throws EntityNotFoundException {
         chatRepository.findById(chatId)
-            .orElseThrow(() -> new EntityNotFoundException(CHAT_NOT_FOUND.formatted(chatId)));
+            .orElseThrow(() -> new EntityNotFoundException(NEED_REGISTRATION));
     }
 
     private LinkDto addLinkIfNotExist(URI url)

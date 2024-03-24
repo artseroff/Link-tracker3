@@ -18,7 +18,7 @@ public class ExceptionApiHandler {
             .map(fieldError -> "field:%s; error:%s".formatted(fieldError.getField(), fieldError.getDefaultMessage()))
             .collect(Collectors.joining(" "));
         return new ApiErrorResponse(
-            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            HttpStatus.BAD_REQUEST.value(),
             exception.getClass().getSimpleName(),
             message
         );
@@ -28,7 +28,7 @@ public class ExceptionApiHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiErrorResponse handleException(Exception exception) {
         return new ApiErrorResponse(
-            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
             exception.getClass().getSimpleName(),
             exception.getMessage()
         );

@@ -26,7 +26,7 @@ public class JpaTgChatService implements TgChatService {
     @Override
     public void register(long chatId) throws EntityAlreadyExistException {
         if (chatRepository.findById(chatId).isPresent()) {
-            throw new EntityAlreadyExistException("Чат уже зарегистрирован");
+            throw new EntityAlreadyExistException(ALREADY_REGISTERED);
         }
         ChatEntity chatEntity = new ChatEntity();
         chatEntity.setId(chatId);
@@ -37,7 +37,7 @@ public class JpaTgChatService implements TgChatService {
     public void unregister(long chatId) throws EntityNotFoundException {
         Optional<ChatEntity> optionalChat = chatRepository.findById(chatId);
 
-        optionalChat.orElseThrow(() -> new EntityNotFoundException("Чат не найден"));
+        optionalChat.orElseThrow(() -> new EntityNotFoundException(CHAT_NOT_FOUND.formatted(chatId)));
 
         optionalChat.get().getLinks()
             .forEach(linkEntity -> {

@@ -35,7 +35,7 @@ public class BotClient extends AbstractClient {
         return response
             .bodyToMono(String.class)
             .flatMap(errorBody -> Mono.error(new ApiException(
-                httpStatus.getReasonPhrase(),
+                httpStatus.value(),
                 errorBody
             )));
     }

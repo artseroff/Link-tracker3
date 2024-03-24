@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.Collection;
 
 public interface LinkService {
-    String CHAT_NOT_FOUND = "Чат %d не найден";
+    String NEED_REGISTRATION = "Вы не зарегистрированы";
     String NOT_TRACKED_LINK = "Ссылка %s вами не отслеживается";
     String ALREADY_TRACKED_LINK = "Вы уже отслеживаете ссылку %s";
 
