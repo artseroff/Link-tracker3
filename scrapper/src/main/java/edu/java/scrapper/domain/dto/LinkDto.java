@@ -16,7 +16,7 @@ public record LinkDto(long id, URI url, OffsetDateTime lastUpdatedAt, OffsetDate
             return null;
         }
         return time.withOffsetSameInstant(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.SECONDS);
+            .truncatedTo(ChronoUnit.MINUTES);
 
     }
 }

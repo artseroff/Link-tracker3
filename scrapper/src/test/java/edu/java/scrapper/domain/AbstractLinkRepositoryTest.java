@@ -57,7 +57,7 @@ public abstract class AbstractLinkRepositoryTest extends IntegrationTest {
         URI url = URI.create("https://github.com");
 
         OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.SECONDS);
+            .truncatedTo(ChronoUnit.MINUTES);
         LinkDto expectedLink = new LinkDto(id, url, nowTime, nowTime);
 
         // Act
@@ -81,7 +81,7 @@ public abstract class AbstractLinkRepositoryTest extends IntegrationTest {
         long id = 1L;
         URI url = URI.create("https://github.com");
         OffsetDateTime time = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.SECONDS);
+            .truncatedTo(ChronoUnit.MINUTES);
 
         // Act
         linkRepository.add(url, time, time);
@@ -109,7 +109,7 @@ public abstract class AbstractLinkRepositoryTest extends IntegrationTest {
         URI githubUrl = URI.create("https://github.com");
         URI stackoverflowUrl = URI.create("https://stackoverflow.com");
         OffsetDateTime time = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.SECONDS);
+            .truncatedTo(ChronoUnit.MINUTES);
 
         LinkDto link1 = new LinkDto(id1, githubUrl, time, time);
         LinkDto link2 = new LinkDto(id2, stackoverflowUrl, time, time);
@@ -138,7 +138,7 @@ public abstract class AbstractLinkRepositoryTest extends IntegrationTest {
         URI stackoverflowUrl2 = URI.create("https://stackoverflow.com/questions");
 
         OffsetDateTime currentTime = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.SECONDS);
+            .truncatedTo(ChronoUnit.MINUTES);
         OffsetDateTime hourAgoTime = currentTime.minusHours(1);
         OffsetDateTime twoHoursAgoTime = hourAgoTime.minusHours(1);
         OffsetDateTime threeHoursAgoTime = twoHoursAgoTime.minusHours(1);
@@ -183,7 +183,7 @@ public abstract class AbstractLinkRepositoryTest extends IntegrationTest {
         long id = 1L;
         URI url = URI.create("https://github.com");
         OffsetDateTime time = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.SECONDS);
+            .truncatedTo(ChronoUnit.MINUTES);
         LinkDto expectedLink = new LinkDto(id, url, time, time);
 
         // Act
