@@ -1,8 +1,14 @@
 package edu.java.scrapper.api.controller;
 
 import edu.java.response.ApiErrorResponse;
+import edu.java.scrapper.service.exception.CorruptedLinkException;
+import edu.java.scrapper.service.exception.EntityAlreadyExistException;
+import edu.java.scrapper.service.exception.EntityNotFoundException;
+import edu.java.scrapper.service.exception.NotSupportedLinkException;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,9 +18,17 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 public class ExceptionApiHandler {
 
+    private static final Map<Class<? extends Exception>, HttpStatus> EXCEPTION_HTTP_STATUS_MAP = Map.of(
+        MethodArgumentTypeMismatchException.class, HttpStatus.BAD_REQUEST,
+        NotSupportedLinkException.class, HttpStatus.BAD_REQUEST,
+        CorruptedLinkException.class, HttpStatus.BAD_REQUEST,
+        EntityNotFoundException.class, HttpStatus.NOT_FOUND,
+        EntityAlreadyExistException.class, HttpStatus.CONFLICT
+    );
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse handleException(MethodArgumentNotValidException exception) {
+    public ApiErrorResponse handleValidateException(MethodArgumentNotValidException exception) {
         String message = exception.getFieldErrors().stream()
             .map(fieldError -> "field:%s; error:%s".formatted(fieldError.getField(), fieldError.getDefaultMessage()))
             .collect(Collectors.joining(" "));
@@ -25,24 +39,18 @@ public class ExceptionApiHandler {
         );
     }
 
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrorResponse handleException(MethodArgumentTypeMismatchException exception) {
-        return new ApiErrorResponse(
-            HttpStatus.BAD_REQUEST.getReasonPhrase(),
-            exception.getClass().getSimpleName(),
-            exception.getMessage()
-        );
-    }
-
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiErrorResponse handleException(Exception exception) {
-        return new ApiErrorResponse(
-            HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
+    public ResponseEntity<ApiErrorResponse> handleException(Exception exception) {
+        HttpStatus status =
+            EXCEPTION_HTTP_STATUS_MAP.getOrDefault(exception.getClass(), HttpStatus.INTERNAL_SERVER_ERROR);
+
+        ApiErrorResponse apiErrorResponse = new ApiErrorResponse(
+            status.getReasonPhrase(),
             exception.getClass().getSimpleName(),
             exception.getMessage()
         );
+        return ResponseEntity.status(status)
+            .body(apiErrorResponse);
     }
 
 }

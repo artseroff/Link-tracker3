@@ -2,7 +2,7 @@ package edu.java.scrapper.client.github;
 
 import edu.java.scrapper.client.AbstractClient;
 import edu.java.scrapper.client.WebClientRuntimeException;
-import edu.java.scrapper.dto.github.RepositoryEventResponse;
+import edu.java.scrapper.client.dto.github.RepositoryEventResponse;
 import org.springframework.http.HttpStatusCode;
 import reactor.core.publisher.Mono;
 
