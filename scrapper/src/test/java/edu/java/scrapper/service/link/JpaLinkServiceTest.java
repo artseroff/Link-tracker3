@@ -31,6 +31,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import static org.mockito.Mockito.when;
 
@@ -139,7 +140,7 @@ public class JpaLinkServiceTest extends IntegrationTest {
 
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     @Test
     public void untrack_ExistOneSubscription()
         throws CorruptedLinkException, NotSupportedLinkException, EntityNotFoundException, EntityAlreadyExistException {

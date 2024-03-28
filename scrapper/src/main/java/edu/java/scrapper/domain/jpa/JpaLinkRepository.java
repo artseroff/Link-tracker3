@@ -32,11 +32,4 @@ public interface JpaLinkRepository extends JpaRepository<LinkEntity, Long> {
     )
     void truncateTable();
 
-    @Query(value = """
-        SELECT links.*
-            FROM links join subscriptions on links.id = subscriptions.link_id
-            WHERE subscriptions.chat_id = ?
-        """, nativeQuery = true)
-    List<LinkEntity> findAllByChat(long id);
-
 }

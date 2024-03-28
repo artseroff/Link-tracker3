@@ -49,7 +49,7 @@ public class JpaLinkService implements LinkService {
             throw new EntityAlreadyExistException(ALREADY_TRACKED_LINK.formatted(linkEntity.getUrl()));
         }
 
-        linkEntity.getChats().add(chatEntity);
+        linkEntity.addChat(chatEntity);
         linkRepository.save(linkEntity);
 
         return new LinkResponse(linkEntity.getId(), linkEntity.getUrl());
@@ -106,12 +106,10 @@ public class JpaLinkService implements LinkService {
             throw new EntityNotFoundException(NOT_TRACKED_LINK.formatted(url));
         }
 
-        chats.remove(chatEntity);
-
-        if (chats.isEmpty()) {
+        linkEntity.removeChat(chatEntity);
+        if (linkEntity.getChats().isEmpty()) {
             linkRepository.delete(linkEntity);
         } else {
-            linkEntity.getChats().remove(chatEntity);
             linkRepository.save(linkEntity);
         }
 
@@ -120,8 +118,8 @@ public class JpaLinkService implements LinkService {
 
     @Override
     public Collection<LinkResponse> listAll(long chatId) throws EntityNotFoundException {
-        checkIsChatRegisteredOrThrow(chatId);
-        return linkRepository.findAllByChat(chatId).stream()
+        ChatEntity chatEntity = checkIsChatRegisteredOrThrow(chatId);
+        return chatEntity.getLinks().stream()
             .map(linkEntity -> new LinkResponse(linkEntity.getId(), linkEntity.getUrl()))
             .toList();
     }

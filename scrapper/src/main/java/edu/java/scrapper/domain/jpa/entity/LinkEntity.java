@@ -78,4 +78,14 @@ public class LinkEntity {
             .map(ChatEntity::getId)
             .toList();
     }
+
+    public void addChat(ChatEntity chatEntity) {
+        chatEntity.getLinks().add(this);
+        chats.add(chatEntity);
+    }
+
+    public void removeChat(ChatEntity chatEntity) {
+        chatEntity.getLinks().remove(this);
+        chats.remove(chatEntity);
+    }
 }

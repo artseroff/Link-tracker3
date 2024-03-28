@@ -19,7 +19,7 @@ public class LinkUpdaterScheduler {
 
     @Scheduled(fixedDelayString = "${app.scheduler.interval}")
     public void update() {
-        /*int countUpdates = linkUpdaterService.update();
-        log.info("LinkUpdaterScheduler обновил {} ссылок", countUpdates);*/
+        int countUpdates = linkUpdaterService.update();
+        log.info("LinkUpdaterScheduler обновил {} ссылок", countUpdates);
     }
 }
