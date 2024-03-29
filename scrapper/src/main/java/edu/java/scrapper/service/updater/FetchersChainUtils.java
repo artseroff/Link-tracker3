@@ -9,6 +9,7 @@ public class FetchersChainUtils {
     public static final String URL_DELIMITER = "/";
     public static final String SECURE_HYPER_TEXT_PROTOCOL = "https://";
     public static final String HYPER_TEXT_PROTOCOL = "http://";
+    private static final String END_OF_LONG_DESCRIPTION = "...";
 
     private FetchersChainUtils() {
     }
@@ -37,6 +38,13 @@ public class FetchersChainUtils {
             current = nextValidator;
         }
         return first;
+    }
+
+    public static String makeStringLessThanBound(String description, int bound) {
+        if (description.length() <= bound) {
+            return description;
+        }
+        return description.substring(0, bound - END_OF_LONG_DESCRIPTION.length()) + END_OF_LONG_DESCRIPTION;
     }
 
 }

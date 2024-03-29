@@ -59,7 +59,7 @@ public class StackoverflowUpdatesFetcher extends AbstractUpdatesFetcher {
             proceedUrl,
             questionAnswerResponse.lastModified(),
             lastUpdatedAt,
-            "В вопросе появились обновления"
+            questionAnswerResponse.getDescription()
         );
     }
 

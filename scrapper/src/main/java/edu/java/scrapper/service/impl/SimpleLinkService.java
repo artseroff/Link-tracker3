@@ -35,9 +35,9 @@ public class SimpleLinkService implements LinkService {
     private final AbstractUpdatesFetcher headUpdatesFetcher;
 
     public SimpleLinkService(
-        TgChatRepository chatRepository,
-        LinkRepository linkRepository,
-        SubscriptionRepository subscriptionRepository,
+        @Qualifier("jooqTgChatRepository") TgChatRepository chatRepository,
+        @Qualifier("jooqLinkRepository") LinkRepository linkRepository,
+        @Qualifier("jooqSubscriptionRepository") SubscriptionRepository subscriptionRepository,
         @Qualifier("headUpdatesFetcher") AbstractUpdatesFetcher headUpdatesFetcher
     ) {
         this.chatRepository = chatRepository;

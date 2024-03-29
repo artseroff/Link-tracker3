@@ -1,6 +1,6 @@
 package edu.java.scrapper.service.updater.github;
 
-import edu.java.scrapper.client.dto.github.RepositoryEventResponse;
+import edu.java.scrapper.client.dto.github.CommitInfoResponse;
 import edu.java.scrapper.client.github.GithubClient;
 import edu.java.scrapper.service.exception.CorruptedLinkException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
@@ -17,6 +17,7 @@ import static edu.java.scrapper.service.updater.FetchersChainUtils.URL_DELIMITER
 @Component
 public class GithubUpdatesFetcher extends AbstractUpdatesFetcher {
     private static final String SITE_BASE_URL = "github.com";
+    private static final int MESSAGE_BOUND = 60;
     private final GithubClient githubClient;
 
     public GithubUpdatesFetcher(
@@ -33,9 +34,8 @@ public class GithubUpdatesFetcher extends AbstractUpdatesFetcher {
 
         RepoSearchRequest request = buildRepoSearchRequest(textPath);
 
-        RepositoryEventResponse repositoryEventResponse =
-            githubClient.fetchLastModified(request.owner(), request.repo());
-        if (repositoryEventResponse == null) {
+        CommitInfoResponse commitInfoResponse = githubClient.fetchLastModifiedCommit(request.owner(), request.repo());
+        if (commitInfoResponse == null) {
             throw new EntityNotFoundException("Ссылка %s указывает на несуществующий репозиторий"
                 .formatted(url));
         }
@@ -45,11 +45,14 @@ public class GithubUpdatesFetcher extends AbstractUpdatesFetcher {
             proceedUrl =
                 FetchersChainUtils.createUrl(FetchersChainUtils.SECURE_HYPER_TEXT_PROTOCOL, SITE_BASE_URL, textPath);
         }
+
+        String description =
+            FetchersChainUtils.makeStringLessThanBound(commitInfoResponse.getDescription(), MESSAGE_BOUND);
         return defineShouldMakeLinkUpdate(
             proceedUrl,
-            repositoryEventResponse.createdAt(),
+            commitInfoResponse.getLastModifiedDate(),
             lastUpdatedAt,
-            "Репозиторий обновился"
+            description
         );
     }
 
