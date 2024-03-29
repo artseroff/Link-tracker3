@@ -91,6 +91,7 @@ public class SimpleStackoverflowClientTest {
             questionId,
             expectedAnswerId,
             expectedLastActivityTime,
+            expectedLastActivityTime,
             new QuestionAnswerResponse.Owner(expectedOwnerName)
         );
 
