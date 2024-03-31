@@ -1,13 +1,14 @@
 package edu.java.client.retry;
 
+import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
 import java.util.Set;
 
 public record RetryConfigRecord(
     boolean enable,
-    RetryType type,
+    @NotNull RetryType type,
     int maxAttempts,
-    Duration delay,
+    @NotNull Duration delay,
     Set<Integer> codes
 ) {
 }
