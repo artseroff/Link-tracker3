@@ -23,10 +23,15 @@ public class RateLimiterFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
         throws IOException, ServletException {
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        Bucket bucket = rateLimiterService.resolveBucket(httpRequest.getRemoteAddr());
+        String ipAddress = httpRequest.getHeader("X-Forwarded-For");
+        if (ipAddress == null || ipAddress.isBlank()) {
+            ipAddress = httpRequest.getRemoteAddr();
+        }
+        Bucket bucket = rateLimiterService.resolveBucket(ipAddress);
         ConsumptionProbe probe = bucket.tryConsumeAndReturnRemaining(1);
         if (probe.isConsumed()) {
             filterChain.doFilter(request, response);
