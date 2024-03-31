@@ -1,17 +1,17 @@
 package edu.java.scrapper.client.bot;
 
+import edu.java.client.ClientConfigRecord;
+import edu.java.client.ServiceClient;
 import edu.java.general.ApiException;
 import edu.java.request.LinkUpdateRequest;
-import edu.java.scrapper.client.AbstractClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Mono;
 
-public class BotClient extends AbstractClient {
-    public BotClient(String baseUrl) {
-        super(baseUrl);
+public class BotClient extends ServiceClient {
+
+    public BotClient(ClientConfigRecord client) {
+        super(client);
     }
 
     public void updates(LinkUpdateRequest request) {
@@ -23,20 +23,10 @@ public class BotClient extends AbstractClient {
             .retrieve()
             .onStatus(
                 HttpStatusCode::isError,
-                this::buildApiException
+                response -> response.bodyToMono(ApiException.class)
             )
             .bodyToMono(Void.class)
+            .retryWhen(retry)
             .block();
-    }
-
-    private Mono<ApiException> buildApiException(ClientResponse response) {
-        HttpStatus httpStatus = (HttpStatus) response.statusCode();
-
-        return response
-            .bodyToMono(String.class)
-            .flatMap(errorBody -> Mono.error(new ApiException(
-                httpStatus.value(),
-                errorBody
-            )));
     }
 }

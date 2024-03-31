@@ -1,6 +1,7 @@
 package edu.java.bot.client.scrapper;
 
-import edu.java.bot.client.AbstractClient;
+import edu.java.client.ClientConfigRecord;
+import edu.java.client.ServiceClient;
 import edu.java.general.ApiException;
 import edu.java.general.LinkSubscriptionDto;
 import edu.java.response.LinkResponse;
@@ -11,14 +12,14 @@ import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Mono;
 
-public class ScrapperClient extends AbstractClient {
+public class ScrapperClient extends ServiceClient {
     private static final String LINKS = "/links";
     private static final String TG_CHAT = "/tg-chat";
 
     private static final String ID_PARAMETER = "/{id}";
 
-    public ScrapperClient(String baseUrl) {
-        super(baseUrl);
+    public ScrapperClient(ClientConfigRecord client) {
+        super(client);
     }
 
     private Mono<ApiException> buildApiException(ClientResponse response) {
@@ -36,6 +37,7 @@ public class ScrapperClient extends AbstractClient {
                 this::buildApiException
             )
             .bodyToMono(Void.class)
+            .retryWhen(retry)
             .block();
     }
 
@@ -50,6 +52,7 @@ public class ScrapperClient extends AbstractClient {
                 this::buildApiException
             )
             .bodyToMono(Void.class)
+            .retryWhen(retry)
             .block();
     }
 
@@ -65,6 +68,7 @@ public class ScrapperClient extends AbstractClient {
                 this::buildApiException
             )
             .bodyToMono(LinkResponse.class)
+            .retryWhen(retry)
             .block();
     }
 
@@ -80,6 +84,7 @@ public class ScrapperClient extends AbstractClient {
                 this::buildApiException
             )
             .bodyToMono(LinkResponse.class)
+            .retryWhen(retry)
             .block();
     }
 
@@ -94,6 +99,7 @@ public class ScrapperClient extends AbstractClient {
                 this::buildApiException
             )
             .bodyToMono(ListLinksResponse.class)
+            .retryWhen(retry)
             .block();
     }
 }

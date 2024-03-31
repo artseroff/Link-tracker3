@@ -4,13 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import edu.java.scrapper.client.AbstractClient;
-import edu.java.scrapper.client.WebClientRuntimeException;
+import edu.java.client.ClientConfigRecord;
+import edu.java.client.ServiceClient;
+import edu.java.general.ApiException;
 import edu.java.scrapper.client.dto.stackoverflow.QuestionAnswerResponse;
 import org.springframework.http.HttpStatusCode;
 import reactor.core.publisher.Mono;
 
-public class SimpleStackoverflowClient extends AbstractClient implements StackoverflowClient {
+public class SimpleStackoverflowClient extends ServiceClient implements StackoverflowClient {
     private final static ObjectMapper OBJECT_MAPPER;
 
     static {
@@ -20,6 +21,10 @@ public class SimpleStackoverflowClient extends AbstractClient implements Stackov
 
     public SimpleStackoverflowClient(String baseUrl) {
         super(baseUrl);
+    }
+
+    public SimpleStackoverflowClient(ClientConfigRecord client) {
+        super(client);
     }
 
     @Override
@@ -33,17 +38,20 @@ public class SimpleStackoverflowClient extends AbstractClient implements Stackov
                 .queryParam("order", "desc")
                 .build())
             .retrieve()
-            .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
-                .flatMap(error -> Mono.error(new WebClientRuntimeException(error))))
+            .onStatus(
+                HttpStatusCode::isError,
+                response -> response.bodyToMono(ApiException.class)
+            )
             .bodyToMono(JsonNode.class);
         try {
-            JsonNode root = jsonNodeMono.block();
+            JsonNode root = jsonNodeMono.retryWhen(retry)
+                .block();
 
             JsonNode items = root.get("items");
             JsonNode lastModified = items.get(0);
 
             return OBJECT_MAPPER.treeToValue(lastModified, QuestionAnswerResponse.class);
-        } catch (WebClientRuntimeException | NullPointerException | JsonProcessingException e) {
+        } catch (ApiException | NullPointerException | JsonProcessingException e) {
             return null;
         }
     }

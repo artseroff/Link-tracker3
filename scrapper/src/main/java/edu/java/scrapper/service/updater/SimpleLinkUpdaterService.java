@@ -57,14 +57,12 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
             try {
                 updateDescriptionOptional =
                     headUpdatesFetcher.chainedUpdatesFetching(linkDto.url(), linkDto.lastUpdatedAt());
+                if (updateDescriptionOptional.isPresent()) {
+                    countUpdates++;
+                    processValidLink(linkDto.id(), updateDescriptionOptional.get());
+                }
             } catch (NotSupportedLinkException | EntityNotFoundException | CorruptedLinkException e) {
                 processInvalidLink(linkDto, e.getMessage());
-                continue;
-            }
-
-            if (updateDescriptionOptional.isPresent()) {
-                countUpdates++;
-                processValidLink(linkDto.id(), updateDescriptionOptional.get());
             }
         }
         return countUpdates;

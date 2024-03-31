@@ -19,5 +19,9 @@ springdoc:
 
 client:
   scrapper:
-    baseUrl: http://localhost:8080
-
+    base-url: http://localhost:8080
+    retry:
+      enable: true
+      type: constant
+      max-attempts: 3
+      delay: 500

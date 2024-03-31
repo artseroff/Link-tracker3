@@ -1,17 +1,20 @@
 package edu.java.bot.configuration;
 
 import edu.java.bot.client.scrapper.ScrapperClient;
-import org.springframework.beans.factory.annotation.Value;
+import edu.java.client.ClientConfigRecord;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 
-@Configuration
-public class ScrapperClientConfig {
-    @Value("${client.scrapper.baseUrl}")
-    private String baseUrl;
+@Validated
+@ConfigurationProperties(prefix = "client", ignoreUnknownFields = false)
+public record ScrapperClientConfig(
+    @NotNull ClientConfigRecord scrapper
+) {
 
     @Bean
     public ScrapperClient githubClient() {
-        return new ScrapperClient(baseUrl);
+        return new ScrapperClient(scrapper);
     }
 }

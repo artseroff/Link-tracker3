@@ -1,6 +1,6 @@
 app:
   scheduler:
-    enable: true
+    enable: false
     interval: 300000 #5 min
     force-check-delay: 10000
     scan-links-limit: 100
@@ -31,11 +31,29 @@ logging:
 
 client:
   github:
-    baseUrl: https://api.github.com
+    base-url: https://api.github.com
+    retry:
+      enable: true
+      type: constant
+      max-attempts: 3
+      delay: 500
+      codes: 400
   stackoverflow:
-    baseUrl: https://api.stackexchange.com/2.3/
+    base-url: https://api.stackexchange.com/2.3/
+    retry:
+      enable: true
+      type: constant
+      max-attempts: 3
+      delay: 500
+      codes: 400,401
   bot:
-    baseUrl: http://localhost:8090
+    base-url: http://localhost:8090
+    retry:
+      enable: true
+      type: constant
+      max-attempts: 3
+      delay: 500
+      codes:
 
 springdoc:
   swagger-ui:
