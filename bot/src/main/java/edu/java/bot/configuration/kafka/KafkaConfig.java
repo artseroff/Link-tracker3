@@ -18,7 +18,6 @@ import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.validation.annotation.Validated;
 
-//@EnableKafka
 @Validated
 @ConfigurationProperties(prefix = "kafka", ignoreUnknownFields = false)
 public record KafkaConfig(String bootstrapServers, String scrapperTopic, String consumerGroup, String dlqTopic) {
@@ -62,9 +61,4 @@ public record KafkaConfig(String bootstrapServers, String scrapperTopic, String 
             .compact()
             .build();
     }
-
-    /*@Bean
-    CommonErrorHandler commonErrorHandler(DeadLetterQueue deadLetterQueue) {
-        return new KafkaErrorHandler(deadLetterQueue);
-    }*/
 }

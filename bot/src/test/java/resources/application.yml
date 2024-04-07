@@ -6,6 +6,9 @@ spring:
     name: bot
   jackson:
     time-zone: UTC
+  kafka:
+    admin:
+      auto-create: false
 
 server:
   port: 8090
