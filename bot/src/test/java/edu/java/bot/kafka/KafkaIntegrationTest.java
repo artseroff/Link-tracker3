@@ -9,7 +9,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public class KafkaIntegrationTest {
 
-    static KafkaContainer KAFKA;
+    public static KafkaContainer KAFKA;
 
     static {
         KAFKA = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.4.4"));

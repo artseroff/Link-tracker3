@@ -21,9 +21,6 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
     @Value("${kafka.scrapper-topic}")
     private String scrapperTopicName;
 
-    @Value("${kafka.dlq-topic}")
-    private String dlqTopic;
-
     @MockBean
     private DeadLetterQueue deadLetterQueue;
 

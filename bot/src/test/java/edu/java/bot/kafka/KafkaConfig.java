@@ -12,9 +12,10 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonSerializer;
+import static edu.java.bot.kafka.KafkaIntegrationTest.KAFKA;
 
 @Configuration
-public class KafkaConfig extends KafkaIntegrationTest {
+public class KafkaConfig {
     @Bean
     public NewTopic scrapperTopic(@Value("${kafka.scrapper-topic}") String scrapperTopicName) {
         return TopicBuilder.name(scrapperTopicName)
