@@ -13,7 +13,11 @@ public record ApplicationConfig(
     Scheduler scheduler,
 
     @NotNull
-    AccessType databaseAccessType
+    AccessType databaseAccessType,
+
+    @NotNull
+    Boolean useQueue
+
 ) {
     public record Scheduler(
         boolean enable,
@@ -21,4 +25,5 @@ public record ApplicationConfig(
         @NotNull Duration forceCheckDelay,
         long scanLinksLimit) {
     }
+
 }

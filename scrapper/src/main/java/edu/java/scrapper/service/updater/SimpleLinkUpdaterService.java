@@ -1,7 +1,6 @@
 package edu.java.scrapper.service.updater;
 
 import edu.java.request.LinkUpdateRequest;
-import edu.java.scrapper.client.bot.BotClient;
 import edu.java.scrapper.configuration.ApplicationConfig;
 import edu.java.scrapper.domain.LinkRepository;
 import edu.java.scrapper.domain.SubscriptionRepository;
@@ -10,34 +9,23 @@ import edu.java.scrapper.domain.dto.LinkDto;
 import edu.java.scrapper.service.exception.CorruptedLinkException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
 import edu.java.scrapper.service.exception.NotSupportedLinkException;
+import edu.java.scrapper.service.updater.sender.SendService;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+@RequiredArgsConstructor
 public class SimpleLinkUpdaterService implements LinkUpdaterService {
     private final LinkRepository linkRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final ApplicationConfig config;
-    private final BotClient botClient;
+    private final SendService sendService;
     private final AbstractUpdatesFetcher headUpdatesFetcher;
-
-    public SimpleLinkUpdaterService(
-        LinkRepository linkRepository,
-        SubscriptionRepository subscriptionRepository,
-        ApplicationConfig config,
-        BotClient botClient,
-        AbstractUpdatesFetcher headUpdatesFetcher
-    ) {
-        this.linkRepository = linkRepository;
-        this.subscriptionRepository = subscriptionRepository;
-        this.config = config;
-        this.botClient = botClient;
-        this.headUpdatesFetcher = headUpdatesFetcher;
-    }
 
     @Override
     @Transactional
@@ -79,7 +67,7 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
                 "Ссылка %s будет удалена из отслеживаемых. Причина:\n%s".formatted(linkDto.url(), errorMessage),
                 chatIds
             );
-        botClient.updates(notUpdateRequest);
+        sendService.sendUpdates(notUpdateRequest);
         // Каскадное удаление
         linkRepository.remove(linkDto.id());
     }
@@ -95,6 +83,6 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
 
         LinkUpdateRequest linkUpdateRequest =
             new LinkUpdateRequest(linkId, linkUpdateDescription.url(), linkUpdateDescription.description(), chatIds);
-        botClient.updates(linkUpdateRequest);
+        sendService.sendUpdates(linkUpdateRequest);
     }
 }

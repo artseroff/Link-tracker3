@@ -1,11 +1,15 @@
 app:
   scheduler:
-    enable: false
+    enable: true
     interval: 300000 #5 min
     force-check-delay: 10000
     scan-links-limit: 100
-  database-access-type: jpa
+  database-access-type: jdbc
+  use-queue: true
 
+kafka:
+  bootstrap-servers: localhost:29091
+  topic: scrapper.link-updates
 
 spring:
   application:
@@ -21,7 +25,14 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: false
-
+  #  kafka:
+  #    producer:
+  #      bootstrap-servers: localhost:29091
+  #      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+  #      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  kafka:
+    admin:
+      auto-create: false
 
 server:
   port: 8080
@@ -37,7 +48,6 @@ client:
       type: constant
       max-attempts: 3
       delay: 500
-      codes: 400
   stackoverflow:
     base-url: https://api.stackexchange.com/2.3/
     retry:
@@ -45,7 +55,6 @@ client:
       type: constant
       max-attempts: 3
       delay: 500
-      codes: 400,401
   bot:
     base-url: http://localhost:8090
     retry:
@@ -53,7 +62,6 @@ client:
       type: constant
       max-attempts: 3
       delay: 500
-      codes:
 
 springdoc:
   swagger-ui:

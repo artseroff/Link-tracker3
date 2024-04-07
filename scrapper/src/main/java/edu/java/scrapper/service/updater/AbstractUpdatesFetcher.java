@@ -6,6 +6,7 @@ import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import static edu.java.scrapper.service.updater.FetchersChainUtils.URL_DELIMITER;
 
@@ -73,15 +74,16 @@ public abstract class AbstractUpdatesFetcher {
     ) {
         OffsetDateTime checkedTime = OffsetDateTime.now(ZoneOffset.UTC);
 
+        OffsetDateTime proceedFetchedUpdateDate = fetchedUpdateDate.truncatedTo(ChronoUnit.MINUTES);
         boolean dontNeedUpdate = lastUpdatedAt != null
-            && (fetchedUpdateDate.isEqual(lastUpdatedAt) || fetchedUpdateDate.isBefore(lastUpdatedAt));
+            && (proceedFetchedUpdateDate.isEqual(lastUpdatedAt) || proceedFetchedUpdateDate.isBefore(lastUpdatedAt));
 
         if (dontNeedUpdate) {
             return Optional.empty();
         }
 
         LinkUpdateDescription linkUpdateDescription =
-            new LinkUpdateDescription(url, fetchedUpdateDate, checkedTime, description);
+            new LinkUpdateDescription(url, proceedFetchedUpdateDate, checkedTime, description);
         return Optional.of(linkUpdateDescription);
     }
 }

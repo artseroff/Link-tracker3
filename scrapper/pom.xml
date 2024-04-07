@@ -46,7 +46,7 @@
             <version>${bucket4j.version}</version>
         </dependency>
 
-        <!-- Kafka -->
+        <!-- kafka -->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>

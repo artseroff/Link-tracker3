@@ -1,11 +1,13 @@
 app:
   telegram-token: ${TELEGRAM_API_TOKEN}
-
 spring:
   application:
     name: bot
   jackson:
     time-zone: UTC
+  kafka:
+    admin:
+      auto-create: false
 
 server:
   port: 8090
@@ -32,3 +34,9 @@ rate-limiter:
   refill:
     tokens: 5000
     period: PT1H
+
+kafka:
+  bootstrap-servers: localhost:29091
+  scrapper-topic: scrapper.link-updates
+  consumer-group: message-group
+  dlq-topic: bot.scrapper-link-updates_dlq
