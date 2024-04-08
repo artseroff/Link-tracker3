@@ -1,28 +1,37 @@
 package edu.java.scrapper.configuration;
 
+import edu.java.client.ClientConfigRecord;
+import edu.java.scrapper.client.bot.BotClient;
 import edu.java.scrapper.client.github.GithubClient;
 import edu.java.scrapper.client.github.SimpleGithubClient;
 import edu.java.scrapper.client.stackoverflow.SimpleStackoverflowClient;
 import edu.java.scrapper.client.stackoverflow.StackoverflowClient;
-import org.springframework.beans.factory.annotation.Value;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.validation.annotation.Validated;
 
-@Configuration
-public class ClientConfig {
-    @Value("${client.github.baseUrl}")
-    private String baseGithubUrl;
-
-    @Value("${client.stackoverflow.baseUrl}")
-    private String baseStackOverFlowUrl;
+@Validated
+@ConfigurationProperties(prefix = "client", ignoreUnknownFields = false)
+public record ClientConfig(
+    @NotNull ClientConfigRecord github,
+    @NotNull ClientConfigRecord stackoverflow,
+    @NotNull ClientConfigRecord bot
+) {
 
     @Bean
     public GithubClient githubClient() {
-        return new SimpleGithubClient(baseGithubUrl);
+        return new SimpleGithubClient(github);
     }
 
     @Bean
     public StackoverflowClient stackoverflowClient() {
-        return new SimpleStackoverflowClient(baseStackOverFlowUrl);
+        return new SimpleStackoverflowClient(stackoverflow);
     }
+
+    @Bean
+    public BotClient botClient() {
+        return new BotClient(bot);
+    }
+
 }

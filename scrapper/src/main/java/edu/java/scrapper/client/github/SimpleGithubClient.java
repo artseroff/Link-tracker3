@@ -1,18 +1,22 @@
 package edu.java.scrapper.client.github;
 
-import edu.java.scrapper.client.AbstractClient;
-import edu.java.scrapper.client.WebClientRuntimeException;
+import edu.java.client.ClientConfigRecord;
+import edu.java.client.ServiceClient;
+import edu.java.general.ApiException;
 import edu.java.scrapper.client.dto.github.CommitInfoResponse;
 import edu.java.scrapper.client.dto.github.RepositoryEventResponse;
 import org.springframework.http.HttpStatusCode;
 import reactor.core.publisher.Mono;
 
-public class SimpleGithubClient extends AbstractClient implements GithubClient {
-
+public class SimpleGithubClient extends ServiceClient implements GithubClient {
     private static final String PER_PAGE_PARAMETER = "per_page";
 
     public SimpleGithubClient(String baseUrl) {
         super(baseUrl);
+    }
+
+    public SimpleGithubClient(ClientConfigRecord client) {
+        super(client);
     }
 
     @Override public RepositoryEventResponse fetchLastModified(String owner, String repo) {
@@ -24,14 +28,14 @@ public class SimpleGithubClient extends AbstractClient implements GithubClient {
             .retrieve()
             .onStatus(
                 HttpStatusCode::isError,
-                response -> response.bodyToMono(String.class)
-                    .flatMap(error -> Mono.error(new WebClientRuntimeException(error)))
+                response -> response.bodyToMono(ApiException.class)
             ).bodyToMono(RepositoryEventResponse[].class);
 
         RepositoryEventResponse[] events;
         try {
-            events = bodyToMono.block();
-        } catch (WebClientRuntimeException e) {
+            events = bodyToMono.retryWhen(retry)
+                .block();
+        } catch (ApiException e) {
             return null;
         }
         if (events == null) {
@@ -51,13 +55,14 @@ public class SimpleGithubClient extends AbstractClient implements GithubClient {
             .onStatus(
                 HttpStatusCode::isError,
                 response -> response.bodyToMono(String.class)
-                    .flatMap(error -> Mono.error(new WebClientRuntimeException(error)))
+                    .flatMap(error -> Mono.error(new ApiException(response.statusCode().value(), error)))
             ).bodyToMono(CommitInfoResponse[].class);
 
         CommitInfoResponse[] commits;
         try {
-            commits = bodyToMono.block();
-        } catch (WebClientRuntimeException e) {
+            commits = bodyToMono.retryWhen(retry)
+                .block();
+        } catch (ApiException e) {
             return null;
         }
         if (commits == null) {
