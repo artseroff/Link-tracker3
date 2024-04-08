@@ -9,8 +9,6 @@ spring:
   kafka:
     admin:
       auto-create: false
-
-server:
   port: 8090
 
 logging:

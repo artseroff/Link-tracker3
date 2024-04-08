@@ -31,14 +31,14 @@ public class BotController implements AutoCloseable {
     private final Set<ActionCommand> commands;
     private final ActionFactory actionFactory;
     private final ApplicationConfig config;
-
-    private TelegramBot telegramBot;
+    private final TelegramBot telegramBot;
 
     @Autowired
-    public BotController(ApplicationConfig config, Set<ActionCommand> commands) {
+    public BotController(ApplicationConfig config, Set<ActionCommand> commands, TelegramBot telegramBot) {
         this.commands = commands;
         this.actionFactory = new ActionFactory(commands);
         this.config = config;
+        this.telegramBot = telegramBot;
     }
 
     @Override
@@ -49,7 +49,6 @@ public class BotController implements AutoCloseable {
 
     @EventListener(ContextRefreshedEvent.class)
     public void init() {
-        telegramBot = new TelegramBot(config.telegramToken());
         setUpdatesListener();
         setBotMenu();
     }

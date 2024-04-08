@@ -4,12 +4,14 @@ import edu.java.bot.service.kafka.dlq.DeadLetterQueue;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.listener.MessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(prefix = "kafka", name = "enable")
 public class KafkaErrorHandler implements CommonErrorHandler {
     private final DeadLetterQueue deadLetterQueue;
 

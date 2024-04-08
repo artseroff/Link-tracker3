@@ -1,5 +1,6 @@
 package edu.java.bot.kafka;
 
+import edu.java.bot.BotApplicationTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.KafkaContainer;
@@ -7,7 +8,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public class KafkaIntegrationTest {
+public class KafkaIntegrationTest extends BotApplicationTest {
 
     public static KafkaContainer KAFKA;
 
@@ -18,6 +19,7 @@ public class KafkaIntegrationTest {
 
     @DynamicPropertySource
     static void kafkaProperties(DynamicPropertyRegistry registry) {
+        registry.add("kafka.enable", () -> true);
         registry.add("kafka.bootstrap-servers", KAFKA::getBootstrapServers);
         registry.add("kafka.scrapper-topic", () -> "bot-test.scrapper-topic");
         registry.add("kafka.consumer-group", () -> "bot-test-group");
