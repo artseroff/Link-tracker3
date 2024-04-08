@@ -40,7 +40,7 @@ public class StackoverflowUpdatesFetcher extends AbstractUpdatesFetcher {
         long questionId = fetchQuestionId(parts);
         // Убираем необязательную часть из ссылки
         if (parts.length > 2) {
-            List<String> strings = List.of(SITE_BASE_URL, parts[0], parts[1]);
+            List<String> strings = List.of(parts[0], parts[1]);
             textPath = String.join(URL_DELIMITER, strings);
         }
 

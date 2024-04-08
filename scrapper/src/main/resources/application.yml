@@ -4,6 +4,7 @@ app:
     interval: 300000 #5 min
     force-check-delay: 10000
     scan-links-limit: 100
+  database-access-type: jpa
 
 spring:
   application:
@@ -15,6 +16,12 @@ spring:
     url: "jdbc:postgresql://localhost:5432/scrapper"
     username: "postgres"
     password: "postgres"
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+
 
 server:
   port: 8080

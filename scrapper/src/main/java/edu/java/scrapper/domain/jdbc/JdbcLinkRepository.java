@@ -8,10 +8,8 @@ import java.util.Collection;
 import java.util.Optional;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-@Repository
 @Transactional
 public class JdbcLinkRepository implements LinkRepository {
     private final JdbcClient jdbcClient;

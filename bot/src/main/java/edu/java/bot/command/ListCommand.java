@@ -1,9 +1,9 @@
 package edu.java.bot.command;
 
 import com.pengrad.telegrambot.request.SendMessage;
+import edu.java.bot.client.scrapper.ScrapperClient;
 import edu.java.bot.command.raw.ParameterizableTextCommand;
-import edu.java.bot.exception.UserNotFoundException;
-import edu.java.bot.service.UserService;
+import edu.java.response.LinkResponse;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +12,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class ListCommand extends AbstractValidatedCommand {
     private static final String NUMBERED_LIST_FORMAT = "%d) %s\n";
-    private final UserService userService;
+
+    private final ScrapperClient scrapperClient;
 
     @Autowired
-    public ListCommand(UserService userService) {
-        this.userService = userService;
+    public ListCommand(ScrapperClient scrapperClient) {
+        this.scrapperClient = scrapperClient;
     }
 
     @Override
@@ -35,24 +36,21 @@ public class ListCommand extends AbstractValidatedCommand {
         long chatId = textCommand.chatId();
 
         String message;
-        try {
-            List<String> links = userService.listTrackedLinkByUserId(chatId);
-            if (links.isEmpty()) {
-                message = "Список отслеживаемых ссылок пуст";
-            } else {
-                message = buildTextListFromLinks(links);
-            }
-        } catch (UserNotFoundException e) {
-            message = e.getMessage();
-        }
+
+        List<LinkResponse> links = scrapperClient.getLinks(chatId).list();
+
+        message = buildTextListFromLinks(links);
 
         return new SendMessage(chatId, message);
     }
 
-    private String buildTextListFromLinks(List<String> links) {
+    private String buildTextListFromLinks(List<LinkResponse> links) {
+        if (links.isEmpty()) {
+            return "Список отслеживаемых ссылок пуст";
+        }
         StringBuilder result = new StringBuilder("Вы отслеживаете следующие ссылки:\n");
         for (int i = 0; i < links.size(); i++) {
-            result.append(NUMBERED_LIST_FORMAT.formatted(i + 1, links.get(i)));
+            result.append(NUMBERED_LIST_FORMAT.formatted(i + 1, links.get(i).url()));
         }
         result.deleteCharAt(result.length() - 1);
         return result.toString();

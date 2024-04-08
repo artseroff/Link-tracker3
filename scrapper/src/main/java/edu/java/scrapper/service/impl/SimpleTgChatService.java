@@ -1,23 +1,21 @@
 package edu.java.scrapper.service.impl;
 
 import edu.java.scrapper.domain.TgChatRepository;
+import edu.java.scrapper.service.LinkService;
 import edu.java.scrapper.service.TgChatService;
 import edu.java.scrapper.service.exception.EntityAlreadyExistException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @Transactional
 public class SimpleTgChatService implements TgChatService {
     private final TgChatRepository chatRepository;
 
-    private final SimpleLinkService linkService;
+    private final LinkService linkService;
 
     public SimpleTgChatService(
-        @Qualifier("jooqTgChatRepository") TgChatRepository chatRepository,
-        SimpleLinkService linkService
+        TgChatRepository chatRepository,
+        LinkService linkService
     ) {
         this.chatRepository = chatRepository;
         this.linkService = linkService;
@@ -26,7 +24,7 @@ public class SimpleTgChatService implements TgChatService {
     @Override
     public void register(long chatId) throws EntityAlreadyExistException {
         if (chatRepository.findById(chatId).isPresent()) {
-            throw new EntityAlreadyExistException("Чат уже зарегистрирован");
+            throw new EntityAlreadyExistException(ALREADY_REGISTERED);
         }
         chatRepository.add(chatId);
     }
@@ -34,7 +32,7 @@ public class SimpleTgChatService implements TgChatService {
     @Override
     public void unregister(long chatId) throws EntityNotFoundException {
         chatRepository.findById(chatId)
-            .orElseThrow(() -> new EntityNotFoundException("Чат не найден"));
+            .orElseThrow(() -> new EntityNotFoundException(CHAT_NOT_FOUND.formatted(chatId)));
 
         linkService.listAll(chatId)
             .forEach(linkDto -> {

@@ -1,7 +1,7 @@
 package edu.java.response;
 
 public record ApiErrorResponse(
-    String code,
+    int code,
     String exceptionName,
     String message
 ) {

@@ -13,32 +13,24 @@ import edu.java.scrapper.service.exception.EntityAlreadyExistException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
 import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
-import edu.java.scrapper.service.updater.FetchersChainUtils;
 import edu.java.scrapper.service.updater.LinkUpdateDescription;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
 @Transactional
 public class SimpleLinkService implements LinkService {
-    private static final String CHAT_NOT_FOUND = "Чат %d не найден";
-    private static final String NOT_TRACKED_LINK = "Ссылка %s вами не отслеживается";
-    private static final String ALREADY_TRACKED_LINK = "Вы уже отслеживаете ссылку %s";
-
     private final TgChatRepository chatRepository;
     private final LinkRepository linkRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final AbstractUpdatesFetcher headUpdatesFetcher;
 
     public SimpleLinkService(
-        @Qualifier("jooqTgChatRepository") TgChatRepository chatRepository,
-        @Qualifier("jooqLinkRepository") LinkRepository linkRepository,
-        @Qualifier("jooqSubscriptionRepository") SubscriptionRepository subscriptionRepository,
-        @Qualifier("headUpdatesFetcher") AbstractUpdatesFetcher headUpdatesFetcher
+        TgChatRepository chatRepository,
+        LinkRepository linkRepository,
+        SubscriptionRepository subscriptionRepository,
+        AbstractUpdatesFetcher headUpdatesFetcher
     ) {
         this.chatRepository = chatRepository;
         this.linkRepository = linkRepository;
@@ -64,12 +56,12 @@ public class SimpleLinkService implements LinkService {
 
     private void checkIsChatRegisteredOrThrow(long chatId) throws EntityNotFoundException {
         chatRepository.findById(chatId)
-            .orElseThrow(() -> new EntityNotFoundException(CHAT_NOT_FOUND.formatted(chatId)));
+            .orElseThrow(() -> new EntityNotFoundException(NEED_REGISTRATION));
     }
 
     private LinkDto addLinkIfNotExist(URI url)
         throws NotSupportedLinkException, EntityNotFoundException, CorruptedLinkException {
-        URI proceedUrl = deleteTrailingSlash(url);
+        URI proceedUrl = LinkService.deleteTrailingSlash(url);
         Optional<LinkDto> linkDto = linkRepository.findByUrl(proceedUrl);
         if (linkDto.isPresent()) {
             return linkDto.get();
@@ -101,7 +93,7 @@ public class SimpleLinkService implements LinkService {
     public LinkResponse untrack(long chatId, URI url) throws EntityNotFoundException {
         checkIsChatRegisteredOrThrow(chatId);
 
-        URI proceedUrl = deleteTrailingSlash(url);
+        URI proceedUrl = LinkService.deleteTrailingSlash(url);
         LinkDto linkDto = linkRepository.findByUrl(proceedUrl)
             .orElseThrow(() -> new EntityNotFoundException(NOT_TRACKED_LINK.formatted(url)));
         SubscriptionDto subscription =
@@ -126,14 +118,5 @@ public class SimpleLinkService implements LinkService {
         return subscriptionRepository.findLinksByChatId(chatId).stream()
             .map(linkDto -> new LinkResponse(linkDto.id(), linkDto.url()))
             .toList();
-    }
-
-    private URI deleteTrailingSlash(URI url) {
-        String fullPath = url.toString().trim();
-        if (fullPath.endsWith(FetchersChainUtils.URL_DELIMITER)) {
-            fullPath = fullPath.substring(0, fullPath.length() - 1);
-            return URI.create(fullPath);
-        }
-        return url;
     }
 }
