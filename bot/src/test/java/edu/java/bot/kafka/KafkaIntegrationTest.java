@@ -8,7 +8,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public class KafkaIntegrationTest extends BotApplicationTest {
+public class KafkaIntegrationTest {
 
     public static KafkaContainer KAFKA;
 
