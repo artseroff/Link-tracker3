@@ -2,6 +2,7 @@ package edu.java.bot.configuration.kafka;
 
 import edu.java.request.LinkUpdateRequest;
 import java.util.Map;
+import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -10,11 +11,11 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.CommonErrorHandler;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
@@ -23,16 +24,15 @@ import org.springframework.validation.annotation.Validated;
 @ConditionalOnProperty(prefix = "kafka", name = "enable")
 @Validated
 @ConfigurationProperties(prefix = "kafka", ignoreUnknownFields = false)
-@EnableKafka
 public record KafkaConfig(boolean enable, String bootstrapServers, String scrapperTopic,
                           String consumerGroup, String dlqTopic) {
 
-    /*@Bean
+    @Bean
     public KafkaAdmin admin() {
         return new KafkaAdmin(Map.of(
             AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers
         ));
-    }*/
+    }
 
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, LinkUpdateRequest> linkUpdateKafkaListenerContainerFactory(

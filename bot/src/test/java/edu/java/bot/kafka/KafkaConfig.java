@@ -2,7 +2,6 @@ package edu.java.bot.kafka;
 
 import edu.java.request.LinkUpdateRequest;
 import java.util.Map;
-import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -12,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import static edu.java.bot.kafka.KafkaIntegrationTest.KAFKA;
@@ -20,13 +18,6 @@ import static edu.java.bot.kafka.KafkaIntegrationTest.KAFKA;
 @ConditionalOnProperty(prefix = "kafka", name = "enable")
 @Configuration
 public class KafkaConfig {
-    @Bean
-    public KafkaAdmin kafkaAdmin() {
-        return new KafkaAdmin(Map.of(
-            AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers()
-        ));
-    }
-
     @Bean
     public NewTopic scrapperTopic(@Value("${kafka.scrapper-topic}") String scrapperTopicName) {
         return TopicBuilder.name(scrapperTopicName)

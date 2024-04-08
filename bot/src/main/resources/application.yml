@@ -35,9 +35,9 @@ rate-limiter:
     tokens: 5000
     period: PT1H
 
-#kafka:
-#  enable: true
-#  bootstrap-servers: localhost:29091
-#  scrapper-topic: scrapper.link-updates
-#  consumer-group: message-group
-#  dlq-topic: bot.scrapper-link-updates_dlq
+kafka:
+  enable: true
+  bootstrap-servers: localhost:29091
+  scrapper-topic: scrapper.link-updates
+  consumer-group: message-group
+  dlq-topic: bot.scrapper-link-updates_dlq
