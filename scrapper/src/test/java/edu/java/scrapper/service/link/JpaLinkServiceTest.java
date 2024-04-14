@@ -80,8 +80,7 @@ public class JpaLinkServiceTest extends IntegrationTest {
 
         long expectedLinkId = 1L;
 
-        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.MINUTES);
+        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime yearAgo = nowTime.minusYears(1);
 
         ChatEntity chatEntity = new ChatEntity(chatId, new LinkedHashSet<>());
@@ -194,8 +193,7 @@ public class JpaLinkServiceTest extends IntegrationTest {
         long chatId = 1L;
         URI inputUrl = GITHUB_LINK;
 
-        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.MINUTES);
+        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC);
         LinkEntity linkEntity = new LinkEntity(1L, inputUrl, nowTime, nowTime, new LinkedHashSet<>());
 
         // Act && Assert
