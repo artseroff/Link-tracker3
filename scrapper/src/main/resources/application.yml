@@ -1,7 +1,8 @@
 app:
   scheduler:
     enable: true
-    interval: 300000 #5 min
+#    interval: 300000 #5 min
+    interval: 30000
     force-check-delay: 10000
     scan-links-limit: 100
   database-access-type: jdbc
@@ -68,3 +69,28 @@ rate-limiter:
   refill:
     tokens: 5000
     period: PT1H
+
+management:
+  server:
+    port: 8081
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      base-path: "/"
+      exposure:
+        include: info, health, prometheus
+      path-mapping:
+        prometheus: "/metrics"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

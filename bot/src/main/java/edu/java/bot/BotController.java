@@ -10,7 +10,6 @@ import com.pengrad.telegrambot.response.SendResponse;
 import edu.java.bot.command.ActionCommand;
 import edu.java.bot.command.factory.ActionFactory;
 import edu.java.bot.command.raw.ParameterizableTextCommand;
-import edu.java.bot.configuration.ApplicationConfig;
 import edu.java.bot.service.StatusCodeUtils;
 import edu.java.general.ApiException;
 import java.util.Set;
@@ -30,14 +29,12 @@ public class BotController implements AutoCloseable {
 
     private final Set<ActionCommand> commands;
     private final ActionFactory actionFactory;
-    private final ApplicationConfig config;
     private final TelegramBot telegramBot;
 
     @Autowired
-    public BotController(ApplicationConfig config, Set<ActionCommand> commands, TelegramBot telegramBot) {
+    public BotController(Set<ActionCommand> commands, TelegramBot telegramBot) {
         this.commands = commands;
         this.actionFactory = new ActionFactory(commands);
-        this.config = config;
         this.telegramBot = telegramBot;
     }
 
