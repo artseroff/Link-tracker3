@@ -1,8 +1,7 @@
 app:
   scheduler:
     enable: true
-#    interval: 300000 #5 min
-    interval: 30000
+    interval: 300000 #5 min
     force-check-delay: 10000
     scan-links-limit: 100
   database-access-type: jdbc

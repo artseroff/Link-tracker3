@@ -12,6 +12,7 @@ import edu.java.bot.command.factory.ActionFactory;
 import edu.java.bot.command.raw.ParameterizableTextCommand;
 import edu.java.bot.service.StatusCodeUtils;
 import edu.java.general.ApiException;
+import io.micrometer.core.instrument.Counter;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,20 @@ public class BotController implements AutoCloseable {
     private final ActionFactory actionFactory;
     private final TelegramBot telegramBot;
 
+    private final Counter proceedMessagesCounter;
+
+    private final Counter errorsCounter;
+
     @Autowired
-    public BotController(Set<ActionCommand> commands, TelegramBot telegramBot) {
+    public BotController(Set<ActionCommand> commands, TelegramBot telegramBot,
+        Counter proceedMessagesCounter,
+        Counter errorsCounter
+    ) {
         this.commands = commands;
         this.actionFactory = new ActionFactory(commands);
         this.telegramBot = telegramBot;
+        this.proceedMessagesCounter = proceedMessagesCounter;
+        this.errorsCounter = errorsCounter;
     }
 
     @Override
@@ -84,7 +94,7 @@ public class BotController implements AutoCloseable {
                 ParameterizableTextCommand.buildTextCommandFromUpdate(update);
             ActionCommand command = actionFactory.defineCommand(textCommand);
             sendMessage = command.execute(textCommand);
-
+            proceedMessagesCounter.increment();
         } catch (IllegalArgumentException | ApiException | WebClientRequestException e) {
             long chatId = update.message().chat().id();
             String errorText = prepareExceptionMessage(e);
@@ -115,6 +125,9 @@ public class BotController implements AutoCloseable {
         if (e instanceof WebClientRequestException
             || (e instanceof ApiException && StatusCodeUtils.is5xxServerError(((ApiException) e).getCode()))) {
             errorText = "Сервис отслеживания ссылок недоступен";
+            errorsCounter.increment();
+        } else {
+            proceedMessagesCounter.increment();
         }
         return errorText;
     }
