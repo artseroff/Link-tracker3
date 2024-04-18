@@ -15,13 +15,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(classes = {BotApplication.class})
-class UnregisteredUserCommandsTest {
+class UnregisteredUserCommandsTest extends BotApplicationTest {
     private static final Long CHAT_ID = 1L;
 
     private static final String PARAMETER_CHAT_ID = "chat_id";

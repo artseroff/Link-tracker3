@@ -1,7 +1,6 @@
 package edu.java.bot.api.controller;
 
-import com.pengrad.telegrambot.request.SendMessage;
-import edu.java.bot.BotController;
+import edu.java.bot.service.link.LinkUpdatesHandler;
 import edu.java.request.LinkUpdateRequest;
 import edu.java.response.ApiErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +8,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,10 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/update")
 @Slf4j
 public class UpdateController {
-    private final BotController botController;
+    private final LinkUpdatesHandler linkUpdatesHandler;
 
-    public UpdateController(BotController botController) {
-        this.botController = botController;
+    public UpdateController(LinkUpdatesHandler linkUpdatesHandler) {
+        this.linkUpdatesHandler = linkUpdatesHandler;
     }
 
     @Operation(summary = "Отправить обновление")
@@ -43,12 +41,7 @@ public class UpdateController {
     )
     @PostMapping()
     public ResponseEntity<Void> processUpdate(@Valid @RequestBody LinkUpdateRequest request) {
-        List<Long> chatIds = request.tgChatIds();
-        String textMessage = "По ссылке %s появились обновления.\n%s".formatted(request.url(), request.description());
-        for (Long chatId : chatIds) {
-            SendMessage message = new SendMessage(chatId, textMessage);
-            botController.sendMessage(message);
-        }
+        linkUpdatesHandler.processUpdate(request);
         return ResponseEntity.ok().build();
     }
 }

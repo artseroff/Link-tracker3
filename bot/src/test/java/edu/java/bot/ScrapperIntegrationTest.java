@@ -17,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import static org.mockito.Mockito.doNothing;
@@ -26,8 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(classes = {BotApplication.class})
-class ScrapperIntegrationTest {
+class ScrapperIntegrationTest extends BotApplicationTest {
     private static final Long CHAT_ID = 1L;
     private static final String PARAMETER_CHAT_ID = "chat_id";
     private static final String PARAMETER_TEXT = "text";

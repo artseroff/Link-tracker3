@@ -1,7 +1,6 @@
 package edu.java.scrapper.service.updater.jpa;
 
 import edu.java.request.LinkUpdateRequest;
-import edu.java.scrapper.client.bot.BotClient;
 import edu.java.scrapper.configuration.ApplicationConfig;
 import edu.java.scrapper.domain.jpa.JpaLinkRepository;
 import edu.java.scrapper.domain.jpa.entity.ChatEntity;
@@ -12,6 +11,7 @@ import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
 import edu.java.scrapper.service.updater.LinkUpdateDescription;
 import edu.java.scrapper.service.updater.LinkUpdaterService;
+import edu.java.scrapper.service.updater.sender.SendService;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -23,18 +23,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaLinkUpdaterService implements LinkUpdaterService {
     private final JpaLinkRepository linkRepository;
     private final ApplicationConfig config;
-    private final BotClient botClient;
+    private final SendService sendService;
     private final AbstractUpdatesFetcher headUpdatesFetcher;
 
     public JpaLinkUpdaterService(
         JpaLinkRepository linkRepository,
         ApplicationConfig config,
-        BotClient botClient,
+        SendService sendService,
         AbstractUpdatesFetcher headUpdatesFetcher
     ) {
         this.linkRepository = linkRepository;
         this.config = config;
-        this.botClient = botClient;
+        this.sendService = sendService;
         this.headUpdatesFetcher = headUpdatesFetcher;
     }
 
@@ -84,7 +84,7 @@ public class JpaLinkUpdaterService implements LinkUpdaterService {
                 "Ссылка %s будет удалена из отслеживаемых. Причина:\n%s".formatted(linkEntity.getUrl(), errorMessage),
                 chatIds
             );
-        botClient.updates(notUpdateRequest);
+        sendService.sendUpdates(notUpdateRequest);
         // Каскадное удаление
         linkRepository.delete(linkEntity);
     }
@@ -106,7 +106,7 @@ public class JpaLinkUpdaterService implements LinkUpdaterService {
                 linkUpdateDescription.description(),
                 chatIds
             );
-        botClient.updates(linkUpdateRequest);
+        sendService.sendUpdates(linkUpdateRequest);
     }
 
 }

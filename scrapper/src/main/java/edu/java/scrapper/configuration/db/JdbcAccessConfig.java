@@ -1,6 +1,5 @@
 package edu.java.scrapper.configuration.db;
 
-import edu.java.scrapper.client.bot.BotClient;
 import edu.java.scrapper.configuration.ApplicationConfig;
 import edu.java.scrapper.domain.LinkRepository;
 import edu.java.scrapper.domain.SubscriptionRepository;
@@ -15,6 +14,7 @@ import edu.java.scrapper.service.impl.SimpleTgChatService;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
 import edu.java.scrapper.service.updater.LinkUpdaterService;
 import edu.java.scrapper.service.updater.SimpleLinkUpdaterService;
+import edu.java.scrapper.service.updater.sender.SendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -70,12 +70,12 @@ public class JdbcAccessConfig {
     }
 
     @Bean
-    public LinkUpdaterService linkUpdaterService(ApplicationConfig config, BotClient botClient) {
+    public LinkUpdaterService linkUpdaterService(ApplicationConfig config, SendService sendService) {
         return new SimpleLinkUpdaterService(
             linkRepository(),
             subscriptionRepository(),
             config,
-            botClient,
+            sendService,
             headUpdatesFetcher
         );
     }
