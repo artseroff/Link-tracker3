@@ -3,6 +3,7 @@ package edu.java.bot.service.link;
 import com.pengrad.telegrambot.request.SendMessage;
 import edu.java.bot.BotController;
 import edu.java.request.LinkUpdateRequest;
+import io.micrometer.core.instrument.Counter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LinkUpdatesHandler {
     private final BotController botController;
+    private final Counter proceedMessagesCounter;
 
     public void processUpdate(LinkUpdateRequest request) {
         List<Long> chatIds = request.tgChatIds();
@@ -19,5 +21,6 @@ public class LinkUpdatesHandler {
             SendMessage message = new SendMessage(chatId, textMessage);
             botController.sendMessage(message);
         }
+        proceedMessagesCounter.increment();
     }
 }

@@ -1,6 +1,7 @@
 package edu.java.scrapper.domain.jpa.entity;
 
 import edu.java.scrapper.configuration.db.UriAttributeConverter;
+import edu.java.scrapper.domain.dto.TimeDifferenceUtils;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -63,8 +64,8 @@ public class LinkEntity {
         }
         LinkEntity that = (LinkEntity) o;
         return Objects.equals(id, that.id) && Objects.equals(url, that.url)
-            && Objects.equals(lastUpdatedAt, that.lastUpdatedAt)
-            && Objects.equals(lastSchedulerCheck, that.lastSchedulerCheck)
+            && TimeDifferenceUtils.isTimeEqualWithEpsilon(lastUpdatedAt, that.lastUpdatedAt)
+            && TimeDifferenceUtils.isTimeEqualWithEpsilon(lastSchedulerCheck, that.lastSchedulerCheck)
             && Objects.equals(chatsToIds(chats), chatsToIds(that.chats));
     }
 

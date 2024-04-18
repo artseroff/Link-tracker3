@@ -41,3 +41,28 @@ kafka:
   scrapper-topic: scrapper.link-updates
   consumer-group: message-group
   dlq-topic: bot.scrapper-link-updates_dlq
+
+management:
+  server:
+    port: 8091
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      base-path: "/"
+      exposure:
+        include: info, health, prometheus
+      path-mapping:
+        prometheus: "/metrics"
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

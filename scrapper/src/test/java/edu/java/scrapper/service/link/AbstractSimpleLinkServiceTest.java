@@ -65,8 +65,7 @@ public abstract class AbstractSimpleLinkServiceTest extends IntegrationTest {
         long expectedLinkId = 1L;
         SubscriptionDto expectedSubscriptionDto = new SubscriptionDto(chatId, expectedLinkId);
 
-        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.MINUTES);
+        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime yearAgo = nowTime.minusYears(1);
 
         LinkDto expectedlinkDto = new LinkDto(expectedLinkId, inputUrl, yearAgo, nowTime);
@@ -175,8 +174,7 @@ public abstract class AbstractSimpleLinkServiceTest extends IntegrationTest {
         long chatId = 1L;
         URI inputUrl = GITHUB_LINK;
 
-        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.MINUTES);
+        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC);
 
         // Act && Assert
         linkRepository.add(inputUrl, nowTime, nowTime);
@@ -199,8 +197,7 @@ public abstract class AbstractSimpleLinkServiceTest extends IntegrationTest {
         long chatId = 1L;
         URI inputUrl1 = GITHUB_LINK;
 
-        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC)
-            .truncatedTo(ChronoUnit.MINUTES);
+        OffsetDateTime nowTime = OffsetDateTime.now(ZoneOffset.UTC);
         OffsetDateTime yearAgo = nowTime.minusYears(1);
 
         prepareUpdaterMocks(inputUrl1, null, nowTime, yearAgo);
