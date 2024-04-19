@@ -8,7 +8,7 @@ app:
   use-queue: true
 
 kafka:
-  bootstrap-servers: localhost:29091
+  bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:29091}
   topic: scrapper.link-updates
 
 spring:
@@ -18,9 +18,9 @@ spring:
     enabled: false
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: "jdbc:postgresql://localhost:5432/scrapper"
-    username: "postgres"
-    password: "postgres"
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:scrapper}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -30,7 +30,7 @@ spring:
       auto-create: false
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 logging:
   config: classpath:log4j2-plain.xml
@@ -51,7 +51,7 @@ client:
       max-attempts: 3
       delay: 500
   bot:
-    base-url: http://localhost:8090
+    base-url: ${BOT_BASE_URL:http://localhost:8090}
     retry:
       enable: true
       type: constant
@@ -71,7 +71,7 @@ rate-limiter:
 
 management:
   server:
-    port: 8081
+    port: ${MANAGEMENT_PORT:8081}
   endpoint:
     info:
       enabled: true

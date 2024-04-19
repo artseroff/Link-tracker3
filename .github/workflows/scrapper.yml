@@ -6,6 +6,13 @@ on:
     paths:
       - .github/workflows/scrapper.yml
       - scrapper/**
+  push:
+    branches:
+      [ 'release' ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build:
@@ -36,6 +43,18 @@ jobs:
           min-coverage-changed-files: 30
           title: Code Coverage
           update-comment: true
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        run:
+          docker build -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -f ${{ github.workspace }}/scrapper/scrapper.Dockerfile ${{ github.workspace }}/scrapper
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
   checkstyle:
     name: checkstyle
