@@ -80,7 +80,7 @@ services:
   bot:
     image: bot
     environment:
-      - "TELEGRAM_API_TOKEN=6973914108:AAEqlfEqsuGx9pnLzVsLtpF8cHOl9lC9kTM"
+      - "TELEGRAM_API_TOKEN=abcd"
       - "SERVER_PORT=8090"
       - "SCRAPPER_BASE_URL=http://scrapper:8080"
       - "BOOTSTRAP_SERVERS=kafka1:9091"
