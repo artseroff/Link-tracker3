@@ -16,7 +16,7 @@ public record ApplicationConfig(
     AccessType databaseAccessType,
 
     @NotNull
-    Boolean useQueue
+    LinkUpdaterType linkUpdaterType
 
 ) {
     public record Scheduler(
@@ -24,6 +24,11 @@ public record ApplicationConfig(
         @NotNull Duration interval,
         @NotNull Duration forceCheckDelay,
         long scanLinksLimit) {
+    }
+
+    public enum LinkUpdaterType {
+        KAFKA,
+        HTTP
     }
 
 }

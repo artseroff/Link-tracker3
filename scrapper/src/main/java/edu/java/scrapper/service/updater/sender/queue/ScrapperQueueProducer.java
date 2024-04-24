@@ -1,22 +1,21 @@
-package edu.java.scrapper.service.queue;
+package edu.java.scrapper.service.updater.sender.queue;
 
 import edu.java.request.LinkUpdateRequest;
-import edu.java.scrapper.configuration.kafka.KafkaProducerConfig;
+import edu.java.scrapper.service.updater.sender.LinkUpdatesSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.stereotype.Service;
 
-@Service
 @RequiredArgsConstructor
 @Slf4j
-public class ScrapperQueueProducer {
+public class ScrapperQueueProducer implements LinkUpdatesSender {
     private final KafkaTemplate<String, LinkUpdateRequest> kafkaTemplate;
-    private final KafkaProducerConfig kafka;
+    private final String topic;
 
-    public void send(LinkUpdateRequest update) {
+    @Override
+    public void sendUpdates(LinkUpdateRequest updateRequest) {
         try {
-            kafkaTemplate.send(kafka.topic(), update);
+            kafkaTemplate.send(topic, updateRequest);
         } catch (Exception ex) {
             log.error("Ошибка при отправке сообщения в очередь", ex);
         }

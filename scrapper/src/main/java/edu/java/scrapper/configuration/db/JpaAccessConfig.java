@@ -10,7 +10,7 @@ import edu.java.scrapper.service.impl.jpa.JpaTgChatService;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
 import edu.java.scrapper.service.updater.LinkUpdaterService;
 import edu.java.scrapper.service.updater.jpa.JpaLinkUpdaterService;
-import edu.java.scrapper.service.updater.sender.SendService;
+import edu.java.scrapper.service.updater.sender.LinkUpdatesSender;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -45,12 +45,12 @@ public class JpaAccessConfig {
     public LinkUpdaterService linkUpdaterService(
         JpaLinkRepository linkRepository,
         ApplicationConfig config,
-        SendService sendService
+        LinkUpdatesSender linkUpdatesSender
     ) {
         return new JpaLinkUpdaterService(
             linkRepository,
             config,
-            sendService,
+            linkUpdatesSender,
             headUpdatesFetcher
         );
     }

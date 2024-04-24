@@ -5,7 +5,7 @@ app:
     force-check-delay: 10000
     scan-links-limit: 100
   database-access-type: jdbc
-  use-queue: true
+  link-updater-type: http
 
 kafka:
   bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:29091}

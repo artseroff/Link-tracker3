@@ -11,7 +11,7 @@ import edu.java.scrapper.service.exception.NotSupportedLinkException;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
 import edu.java.scrapper.service.updater.LinkUpdateDescription;
 import edu.java.scrapper.service.updater.LinkUpdaterService;
-import edu.java.scrapper.service.updater.sender.SendService;
+import edu.java.scrapper.service.updater.sender.LinkUpdatesSender;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -23,18 +23,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class JpaLinkUpdaterService implements LinkUpdaterService {
     private final JpaLinkRepository linkRepository;
     private final ApplicationConfig config;
-    private final SendService sendService;
+    private final LinkUpdatesSender linkUpdatesSender;
     private final AbstractUpdatesFetcher headUpdatesFetcher;
 
     public JpaLinkUpdaterService(
         JpaLinkRepository linkRepository,
         ApplicationConfig config,
-        SendService sendService,
+        LinkUpdatesSender linkUpdatesSender,
         AbstractUpdatesFetcher headUpdatesFetcher
     ) {
         this.linkRepository = linkRepository;
         this.config = config;
-        this.sendService = sendService;
+        this.linkUpdatesSender = linkUpdatesSender;
         this.headUpdatesFetcher = headUpdatesFetcher;
     }
 
@@ -84,7 +84,7 @@ public class JpaLinkUpdaterService implements LinkUpdaterService {
                 "Ссылка %s будет удалена из отслеживаемых. Причина:\n%s".formatted(linkEntity.getUrl(), errorMessage),
                 chatIds
             );
-        sendService.sendUpdates(notUpdateRequest);
+        linkUpdatesSender.sendUpdates(notUpdateRequest);
         // Каскадное удаление
         linkRepository.delete(linkEntity);
     }
@@ -106,7 +106,7 @@ public class JpaLinkUpdaterService implements LinkUpdaterService {
                 linkUpdateDescription.description(),
                 chatIds
             );
-        sendService.sendUpdates(linkUpdateRequest);
+        linkUpdatesSender.sendUpdates(linkUpdateRequest);
     }
 
 }

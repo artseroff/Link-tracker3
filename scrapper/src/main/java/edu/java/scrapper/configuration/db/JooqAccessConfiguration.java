@@ -14,7 +14,7 @@ import edu.java.scrapper.service.impl.SimpleTgChatService;
 import edu.java.scrapper.service.updater.AbstractUpdatesFetcher;
 import edu.java.scrapper.service.updater.LinkUpdaterService;
 import edu.java.scrapper.service.updater.SimpleLinkUpdaterService;
-import edu.java.scrapper.service.updater.sender.SendService;
+import edu.java.scrapper.service.updater.sender.LinkUpdatesSender;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,12 +69,12 @@ public class JooqAccessConfiguration {
     }
 
     @Bean
-    public LinkUpdaterService linkUpdaterService(ApplicationConfig config, SendService sendService) {
+    public LinkUpdaterService linkUpdaterService(ApplicationConfig config, LinkUpdatesSender linkUpdatesSender) {
         return new SimpleLinkUpdaterService(
             linkRepository(),
             subscriptionRepository(),
             config,
-            sendService,
+            linkUpdatesSender,
             headUpdatesFetcher
         );
     }
