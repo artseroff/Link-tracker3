@@ -31,6 +31,7 @@
         <bucket4j.version>8.10.1</bucket4j.version>
         <micrometer-prometheus.version>1.12.4</micrometer-prometheus.version>
         <micrometer-brave.version>1.2.4</micrometer-brave.version>
+        <spring-dotenv.version>4.0.0</spring-dotenv.version>
 
         <!-- Tests -->
         <testcontainers.version>1.19.4</testcontainers.version>
@@ -63,6 +64,13 @@
                 <artifactId>java-telegram-bot-api</artifactId>
                 <version>${java-telegram-bot-api.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>me.paulschwarz</groupId>
+                <artifactId>spring-dotenv</artifactId>
+                <version>${spring-dotenv.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.wiremock</groupId>
                 <artifactId>wiremock-standalone</artifactId>

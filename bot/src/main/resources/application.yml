@@ -10,7 +10,7 @@ spring:
       auto-create: false
 
 server:
-  port: 8090
+  port: ${SERVER_PORT:8090}
 
 logging:
   config: classpath:log4j2-plain.xml
@@ -21,7 +21,7 @@ springdoc:
 
 client:
   scrapper:
-    base-url: http://localhost:8080
+    base-url: ${SCRAPPER_BASE_URL:http://localhost:8080}
     retry:
       enable: true
       type: constant
@@ -37,14 +37,14 @@ rate-limiter:
 
 kafka:
   enable: true
-  bootstrap-servers: localhost:29091
+  bootstrap-servers: ${BOOTSTRAP_SERVERS:localhost:29091}
   scrapper-topic: scrapper.link-updates
   consumer-group: message-group
   dlq-topic: bot.scrapper-link-updates_dlq
 
 management:
   server:
-    port: 8091
+    port: ${MANAGEMENT_PORT:8091}
   endpoint:
     info:
       enabled: true

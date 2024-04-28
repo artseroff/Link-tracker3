@@ -9,7 +9,7 @@ import edu.java.scrapper.domain.dto.LinkDto;
 import edu.java.scrapper.service.exception.CorruptedLinkException;
 import edu.java.scrapper.service.exception.EntityNotFoundException;
 import edu.java.scrapper.service.exception.NotSupportedLinkException;
-import edu.java.scrapper.service.updater.sender.SendService;
+import edu.java.scrapper.service.updater.sender.LinkUpdatesSender;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -24,7 +24,7 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
     private final LinkRepository linkRepository;
     private final SubscriptionRepository subscriptionRepository;
     private final ApplicationConfig config;
-    private final SendService sendService;
+    private final LinkUpdatesSender linkUpdatesSender;
     private final AbstractUpdatesFetcher headUpdatesFetcher;
 
     @Override
@@ -67,7 +67,7 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
                 "Ссылка %s будет удалена из отслеживаемых. Причина:\n%s".formatted(linkDto.url(), errorMessage),
                 chatIds
             );
-        sendService.sendUpdates(notUpdateRequest);
+        linkUpdatesSender.sendUpdates(notUpdateRequest);
         // Каскадное удаление
         linkRepository.remove(linkDto.id());
     }
@@ -83,6 +83,6 @@ public class SimpleLinkUpdaterService implements LinkUpdaterService {
 
         LinkUpdateRequest linkUpdateRequest =
             new LinkUpdateRequest(linkId, linkUpdateDescription.url(), linkUpdateDescription.description(), chatIds);
-        sendService.sendUpdates(linkUpdateRequest);
+        linkUpdatesSender.sendUpdates(linkUpdateRequest);
     }
 }

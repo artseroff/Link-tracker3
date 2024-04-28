@@ -1,12 +1,13 @@
 package edu.java.scrapper.configuration;
 
 import edu.java.client.ClientConfigRecord;
-import edu.java.scrapper.client.bot.BotClient;
 import edu.java.scrapper.client.github.GithubClient;
 import edu.java.scrapper.client.github.SimpleGithubClient;
 import edu.java.scrapper.client.stackoverflow.SimpleStackoverflowClient;
 import edu.java.scrapper.client.stackoverflow.StackoverflowClient;
+import edu.java.scrapper.service.updater.sender.bot.BotClient;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.validation.annotation.Validated;
@@ -30,6 +31,7 @@ public record ClientConfig(
     }
 
     @Bean
+    @ConditionalOnProperty(prefix = "app", name = "link-updater-type", havingValue = "http")
     public BotClient botClient() {
         return new BotClient(bot);
     }

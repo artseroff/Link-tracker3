@@ -77,7 +77,40 @@ services:
       - "3000:3000"
     volumes:
       - grafana:/var/lib/grafana
+  bot:
+    image: bot
+    environment:
+      - "TELEGRAM_API_TOKEN=abcd"
+      - "SERVER_PORT=8090"
+      - "SCRAPPER_BASE_URL=http://scrapper:8080"
+      - "BOOTSTRAP_SERVERS=kafka1:9091"
+      - "MANAGEMENT_PORT=8091"
+    ports:
+      - "8090:8090"
+    depends_on:
+      - postgresql
+      - kafka1
+    networks:
+      - backend
 
+  scrapper:
+    image: scrapper
+    environment:
+      - "BOOTSTRAP_SERVERS=kafka1:9091"
+      - "DB_HOST=postgresql"
+      - "DB_PORT=5432"
+      - "DB_NAME=scrapper"
+      - "DB_USERNAME=postgres"
+      - "DB_PASSWORD=postgres"
+      - "SERVER_PORT=8080"
+      - "BOT_BASE_URL=http://bot:8090"
+      - "MANAGEMENT_PORT=8081"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - bot
+    networks:
+      - backend
 volumes:
   postgresql: { }
   kafka: { }

@@ -1,6 +1,8 @@
 package edu.java.scrapper.configuration.kafka;
 
 import edu.java.request.LinkUpdateRequest;
+import edu.java.scrapper.service.updater.sender.LinkUpdatesSender;
+import edu.java.scrapper.service.updater.sender.queue.ScrapperQueueProducer;
 import java.util.Map;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -17,7 +19,7 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-@ConditionalOnProperty(prefix = "app", name = "use-queue")
+@ConditionalOnProperty(prefix = "app", name = "link-updater-type", havingValue = "kafka")
 @ConfigurationProperties(prefix = "kafka", ignoreUnknownFields = false)
 public record KafkaProducerConfig(String bootstrapServers, String topic) {
     @Bean
@@ -43,5 +45,10 @@ public record KafkaProducerConfig(String bootstrapServers, String topic) {
             .replicas(1)
             .compact()
             .build();
+    }
+
+    @Bean
+    public LinkUpdatesSender scrapperQueueProducer(KafkaTemplate<String, LinkUpdateRequest> linkUpdaterKafkaTemplate) {
+        return new ScrapperQueueProducer(linkUpdaterKafkaTemplate, topic);
     }
 }

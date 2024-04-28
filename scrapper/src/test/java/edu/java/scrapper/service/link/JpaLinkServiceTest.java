@@ -17,7 +17,6 @@ import edu.java.scrapper.service.updater.LinkUpdateDescription;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
