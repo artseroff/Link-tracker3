@@ -1,6 +1,8 @@
 package edu.java.bot.kafka;
 
 import edu.java.bot.BotApplicationTest;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.KafkaContainer;
@@ -8,7 +10,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public class KafkaIntegrationTest {
+public class KafkaIntegrationTest extends BotApplicationTest {
 
     public static KafkaContainer KAFKA;
 
@@ -24,6 +26,12 @@ public class KafkaIntegrationTest {
         registry.add("kafka.scrapper-topic", () -> "bot-test.scrapper-topic");
         registry.add("kafka.consumer-group", () -> "bot-test-group");
         registry.add("kafka.dlq-topic", () -> "bot-test.scrapper-topic_dlq");
+    }
+
+    @Test
+    @SneakyThrows
+    public void waitTelegramBotMock() {
+        Thread.sleep(1000);
     }
 
 }
