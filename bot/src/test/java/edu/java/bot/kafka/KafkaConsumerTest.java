@@ -5,15 +5,17 @@ import edu.java.bot.service.link.LinkUpdatesHandler;
 import edu.java.request.LinkUpdateRequest;
 import java.net.URI;
 import java.util.List;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 
-@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KafkaConsumerTest extends KafkaIntegrationTest {
     private static final String LINK = "https://github.com/artseroff/link-tracker";
     private final KafkaTemplate<String, LinkUpdateRequest> linkUpdateKafkaTemplate;
@@ -35,6 +37,12 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
     ) {
         this.linkUpdateKafkaTemplate = linkUpdateKafkaTemplate;
         this.stringKafkaTemplate = stringKafkaTemplate;
+    }
+
+    @BeforeAll
+    @SneakyThrows
+    public void waitMocks() {
+        Thread.sleep(1000);
     }
 
     @Test
