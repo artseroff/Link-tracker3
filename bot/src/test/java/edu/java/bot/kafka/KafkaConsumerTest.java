@@ -15,6 +15,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 @SpringBootTest
 public class KafkaConsumerTest extends KafkaIntegrationTest {
+    private static final String LINK = "https://github.com/artseroff/link-tracker";
     private final KafkaTemplate<String, LinkUpdateRequest> linkUpdateKafkaTemplate;
     private final KafkaTemplate<String, String> stringKafkaTemplate;
 
@@ -41,7 +42,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
 
         // Arrange
         LinkUpdateRequest linkUpdateRequest =
-            new LinkUpdateRequest(1L, URI.create("https://github.com/artseroff/Link-tracker"), "", List.of(1L));
+            new LinkUpdateRequest(1L, URI.create(LINK), "", List.of(1L));
 
         // Act
         linkUpdateKafkaTemplate.send(scrapperTopicName, linkUpdateRequest);
@@ -107,7 +108,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
 
         // Arrange
         LinkUpdateRequest linkUpdateRequest =
-            new LinkUpdateRequest(1L, URI.create("https://github.com/artseroff/Link-tracker"), "", List.of(1L));
+            new LinkUpdateRequest(1L, URI.create(LINK), "", List.of(1L));
         Mockito.doThrow(RuntimeException.class).when(linkUpdatesHandler).processUpdate(Mockito.any());
 
         // Act

@@ -31,7 +31,7 @@ public class KafkaIntegrationTest extends BotApplicationTest {
     @Test
     @SneakyThrows
     public void waitTelegramBotMock() {
-        Thread.sleep(1000);
+        Thread.sleep(2000);
     }
 
 }
