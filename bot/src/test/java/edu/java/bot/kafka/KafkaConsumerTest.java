@@ -1,20 +1,23 @@
 package edu.java.bot.kafka;
 
-import edu.java.bot.service.kafka.dlq.DeadLetterQueue;
+import edu.java.bot.service.kafka.dlq.DeadLetterQueueProducer;
 import edu.java.bot.service.link.LinkUpdatesHandler;
 import edu.java.request.LinkUpdateRequest;
 import java.net.URI;
 import java.util.List;
+import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.kafka.core.KafkaTemplate;
 
-@SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class KafkaConsumerTest extends KafkaIntegrationTest {
+    private static final String LINK = "https://github.com/artseroff/link-tracker";
     private final KafkaTemplate<String, LinkUpdateRequest> linkUpdateKafkaTemplate;
     private final KafkaTemplate<String, String> stringKafkaTemplate;
 
@@ -22,7 +25,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
     private String scrapperTopicName;
 
     @MockBean
-    private DeadLetterQueue deadLetterQueue;
+    private DeadLetterQueueProducer deadLetterQueueProducer;
 
     @MockBean
     private LinkUpdatesHandler linkUpdatesHandler;
@@ -36,12 +39,18 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
         this.stringKafkaTemplate = stringKafkaTemplate;
     }
 
+    @BeforeAll
+    @SneakyThrows
+    public void waitMocks() {
+        Thread.sleep(1000);
+    }
+
     @Test
     public void botSendUpdatesToChatTest() {
 
         // Arrange
         LinkUpdateRequest linkUpdateRequest =
-            new LinkUpdateRequest(1L, URI.create("https://github.com/artseroff/Link-tracker"), "", List.of(1L));
+            new LinkUpdateRequest(1L, URI.create(LINK), "", List.of(1L));
 
         // Act
         linkUpdateKafkaTemplate.send(scrapperTopicName, linkUpdateRequest);
@@ -74,7 +83,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
 
         // Assert
         Mockito.verifyNoInteractions(linkUpdatesHandler);
-        Mockito.verify(deadLetterQueue).send(Mockito.any());
+        Mockito.verify(deadLetterQueueProducer).send(Mockito.any());
     }
 
     @Test
@@ -99,7 +108,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
 
         // Assert
         Mockito.verifyNoInteractions(linkUpdatesHandler);
-        Mockito.verify(deadLetterQueue).send(Mockito.any());
+        Mockito.verify(deadLetterQueueProducer).send(Mockito.any());
     }
 
     @Test
@@ -107,7 +116,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
 
         // Arrange
         LinkUpdateRequest linkUpdateRequest =
-            new LinkUpdateRequest(1L, URI.create("https://github.com/artseroff/Link-tracker"), "", List.of(1L));
+            new LinkUpdateRequest(1L, URI.create(LINK), "", List.of(1L));
         Mockito.doThrow(RuntimeException.class).when(linkUpdatesHandler).processUpdate(Mockito.any());
 
         // Act
@@ -120,6 +129,6 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
         }
 
         // Assert
-        Mockito.verify(deadLetterQueue).send(Mockito.any());
+        Mockito.verify(deadLetterQueueProducer).send(Mockito.any());
     }
 }

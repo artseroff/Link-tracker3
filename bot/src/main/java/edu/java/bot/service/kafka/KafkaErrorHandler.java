@@ -1,6 +1,6 @@
 package edu.java.bot.service.kafka;
 
-import edu.java.bot.service.kafka.dlq.DeadLetterQueue;
+import edu.java.bot.service.kafka.dlq.DeadLetterQueueProducer;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "kafka", name = "enable")
 public class KafkaErrorHandler implements CommonErrorHandler {
-    private final DeadLetterQueue deadLetterQueue;
+    private final DeadLetterQueueProducer deadLetterQueueProducer;
 
     @Override
     public boolean handleOne(
@@ -37,6 +37,6 @@ public class KafkaErrorHandler implements CommonErrorHandler {
     }
 
     private void handle(Exception exception) {
-        deadLetterQueue.send(exception.getMessage());
+        deadLetterQueueProducer.send(exception.getMessage());
     }
 }
