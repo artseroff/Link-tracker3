@@ -1,6 +1,6 @@
 package edu.java.bot.service.kafka;
 
-import edu.java.bot.service.kafka.dlq.DeadLetterQueue;
+import edu.java.bot.service.kafka.dlq.DeadLetterQueueProducer;
 import edu.java.bot.service.link.LinkUpdatesHandler;
 import edu.java.request.LinkUpdateRequest;
 import jakarta.validation.ConstraintViolation;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class ScrapperMessagesListener {
     private final LinkUpdatesHandler linkUpdatesHandler;
     private final Validator validator;
-    private final DeadLetterQueue deadLetterQueue;
+    private final DeadLetterQueueProducer deadLetterQueueProducer;
 
     @KafkaListener(topics = "${kafka.scrapper-topic}",
                    containerFactory = "linkUpdateKafkaListenerContainerFactory",
@@ -28,13 +28,13 @@ public class ScrapperMessagesListener {
     public void listenMessages(LinkUpdateRequest updateRequest) {
         Optional<String> constraints = validateLinkUpdateRequest(updateRequest);
         if (constraints.isPresent()) {
-            deadLetterQueue.send(constraints.get());
+            deadLetterQueueProducer.send(constraints.get());
             return;
         }
         try {
             linkUpdatesHandler.processUpdate(updateRequest);
         } catch (Exception e) {
-            deadLetterQueue.send(e.getMessage());
+            deadLetterQueueProducer.send(e.getMessage());
         }
     }
 

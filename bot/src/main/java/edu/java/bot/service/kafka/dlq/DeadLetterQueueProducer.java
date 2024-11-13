@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "kafka", name = "enable")
-public class DeadLetterQueue {
+public class DeadLetterQueueProducer {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final KafkaConfig config;
     private final Counter errorsCounter;

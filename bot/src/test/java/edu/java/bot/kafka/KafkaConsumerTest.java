@@ -1,6 +1,6 @@
 package edu.java.bot.kafka;
 
-import edu.java.bot.service.kafka.dlq.DeadLetterQueue;
+import edu.java.bot.service.kafka.dlq.DeadLetterQueueProducer;
 import edu.java.bot.service.link.LinkUpdatesHandler;
 import edu.java.request.LinkUpdateRequest;
 import java.net.URI;
@@ -22,7 +22,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
     private String scrapperTopicName;
 
     @MockBean
-    private DeadLetterQueue deadLetterQueue;
+    private DeadLetterQueueProducer deadLetterQueueProducer;
 
     @MockBean
     private LinkUpdatesHandler linkUpdatesHandler;
@@ -74,7 +74,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
 
         // Assert
         Mockito.verifyNoInteractions(linkUpdatesHandler);
-        Mockito.verify(deadLetterQueue).send(Mockito.any());
+        Mockito.verify(deadLetterQueueProducer).send(Mockito.any());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
 
         // Assert
         Mockito.verifyNoInteractions(linkUpdatesHandler);
-        Mockito.verify(deadLetterQueue).send(Mockito.any());
+        Mockito.verify(deadLetterQueueProducer).send(Mockito.any());
     }
 
     @Test
@@ -120,6 +120,6 @@ public class KafkaConsumerTest extends KafkaIntegrationTest {
         }
 
         // Assert
-        Mockito.verify(deadLetterQueue).send(Mockito.any());
+        Mockito.verify(deadLetterQueueProducer).send(Mockito.any());
     }
 }

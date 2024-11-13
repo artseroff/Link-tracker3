@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ScrapperIntegrationTest extends BotApplicationTest {
+class AuthorizedUserTest extends BotApplicationTest {
     private static final Long CHAT_ID = 1L;
     private static final String PARAMETER_CHAT_ID = "chat_id";
     private static final String PARAMETER_TEXT = "text";
@@ -45,7 +45,7 @@ class ScrapperIntegrationTest extends BotApplicationTest {
     private ScrapperClient scrapperClient;
 
     @Autowired
-    public ScrapperIntegrationTest(BotController botController) {
+    public AuthorizedUserTest(BotController botController) {
         this.botController = botController;
     }
 
